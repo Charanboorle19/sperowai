@@ -6,13 +6,23 @@ import { profileData, clearProfileData } from '../data/profileData';
 import { useNavigate } from 'react-router-dom';
 import Landpage from './Landpage';
 import TabletHeader from './Tablet-header';
+import apiService from '../services/api/apiService';
 
 const TabletProfile = () => {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    clearProfileData();
-    navigate('/landing');
+  const handleLogout = async () => {
+    try {
+      console.log("Logging out...");
+      await apiService.logout();
+      console.log("Logout successful.");
+    } catch (error) {
+      console.error("Logout API error:", error);
+    } finally {
+      // Always clear local storage and navigate, even if API call fails
+      localStorage.removeItem('jwt_token');
+      navigate('/landpage');
+    }
   };
 
   const profileInfo = {
@@ -107,7 +117,7 @@ const TabletProfile = () => {
             {/* Version Info */}
             <div className="mt-10 text-center text-gray-400">
               <p>Version 1.0.0</p>
-              <p>© 2024 Sperow. All rights reserved.</p>
+              <p> 2024 Sperow. All rights reserved.</p>
             </div>
           </div>
         </div>

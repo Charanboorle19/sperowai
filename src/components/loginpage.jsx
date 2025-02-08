@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { IoArrowBack } from 'react-icons/io5';
-import { profileData } from '../data/profileData';
 import { useNavigate } from 'react-router-dom';
+import apiService from '../services/api/apiService';
 
 const SperowIcon = () => (
   <svg 
@@ -19,26 +19,31 @@ const SperowIcon = () => (
 );
 
 const LoginPage = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    
-    // Validate empty fields
     if (!email || !password) {
       setError('Please fill in all fields');
       return;
     }
 
-    if (email === profileData.email && password === profileData.password) {
-      // Handle successful login
-      console.log('Login successful');
-      navigate('/'); // Only navigate on successful login
-    } else {
-      setError('Invalid email or password');
+    try {
+      // Remove any existing token before login attempt
+      localStorage.removeItem('jwt_token');
+      const response = await apiService.login({ email, password });
+      if (response) {
+        localStorage.setItem('jwt_token', response.access_token);
+        navigate('/');
+      } else {
+        setError('Invalid credentials');
+      }
+    } catch (error) {
+      console.error(error);
+      setError('Login failed. Please try again.');
     }
   };
 
@@ -142,15 +147,8 @@ const LoginPage = () => {
               </div>
             </div>
 
-            <p className="text-center mt-6 text-gray-600">
-              Don't have an account?{' '}
-              <button
-                onClick={() => navigate('/signuppage')}
-                className="text-[#3973EB] font-medium hover:underline"
-              >
-                Sign Up
-              </button>
-            </p>
+            
+            
           </div>
         </div>
       </div>

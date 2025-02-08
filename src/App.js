@@ -1,82 +1,129 @@
 import React from 'react';
 import './App.css';
-import { Routes, Route } from 'react-router-dom';
-import HomePage from './components/Homepage';
-import TabletAIpagemain from './components/Tablet-aipagemain';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import ProtectedRoute from './components/ProtectedRoute';
+import LoginPage from './components/loginpage';
+import { jwtDecode } from 'jwt-decode';
+import { useMediaQuery } from 'react-responsive';
 import TabletHomepage from './components/Tablet-homepage';
-import TabletHeader from './components/Tablet-header';
-import TabletSummaryPage from './components/Tablet-SummaryPage';
 import TabletDashboard from './components/Tablet-dashboard';
 import TabletProfile from './components/Tablet-profile';
-import { useMediaQuery } from 'react-responsive';
+import TabletAIpagemain from './components/Tablet-aipagemain';
+import TabletAnalysisPage from './components/Tablet-AnalysisPage';
+import TabletSummaryPage from './components/Tablet-SummaryPage';
+import TabletCloseCase from './components/Tablet-closecase';
+import TabletPerformance from './components/Tablet-performancepage';
+import HomePage from './components/Homepage';
 import DashboardMain from './components/DashboardMain';
 import ProfilePage from './components/profilepage';
 import AIpagemain from './components/AIpagemain';
 import AnalysisPage from './components/Analysispage';
-import TabletAnalysisPage from './components/Tablet-AnalysisPage';
 import SummaryPage from './components/Summarypage';
 import CloseCase from './components/closecase';
-import TabletCloseCase from './components/Tablet-closecase';
-import Landpage from './components/Landpage';
-import LoginPage from './components/loginpage';
-import SignupPage from './components/signuppage';
 import PerformancePage from './components/Performancepage';
 import TreatmentTimeRange from './components/Treatmenttimepage';
-import TabletPerformance from './components/Tablet-performancepage';
+import Landpage from './components/Landpage';
 
 function App() {
   const isTabletOrDesktop = useMediaQuery({ minWidth: 768 });
-  console.log(isTabletOrDesktop);
+
+  // Function to check if user is logged in
+  const isAuthenticated = () => {
+    const token = localStorage.getItem('jwt_token');
+    if (!token) return false;
+
+    try {
+      const decodedToken = jwtDecode(token);
+      const currentTime = Date.now() / 1000;
+      return decodedToken.exp > currentTime;
+    } catch {
+      return false;
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#F7F8F9]">
+      
       <Routes>
-        {/* Home Routes */}
-        <Route path="/" element={isTabletOrDesktop ? <TabletHomepage /> : <HomePage />} />
-        
-        {/* Dashboard Routes */}
-        <Route path="/dashboard" element={isTabletOrDesktop ? <TabletDashboard /> : <DashboardMain />} />
-        
-        {/* Profile Routes */}
-        <Route path="/profile" element={isTabletOrDesktop ? <TabletProfile /> : <ProfilePage />} />
+        {/* Public routes */}
+        <Route path='/landpage' element={<Landpage />} />
+        <Route path="/login" element={<LoginPage />} />
 
-        {/* AI Routes */}
-        <Route path="/ai" element={isTabletOrDesktop ? <TabletAIpagemain /> : <AIpagemain />} />
+        {/* Protected routes */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              {isTabletOrDesktop ? <TabletDashboard /> : <DashboardMain />}
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              {isTabletOrDesktop ? <TabletProfile /> : <ProfilePage />}
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ai"
+          element={
+            <ProtectedRoute>
+              {isTabletOrDesktop ? <TabletAIpagemain /> : <AIpagemain />}
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/analysis"
+          element={
+            <ProtectedRoute>
+              {isTabletOrDesktop ? <TabletAnalysisPage /> : <AnalysisPage />}
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/summary"
+          element={
+            <ProtectedRoute>
+              {isTabletOrDesktop ? <TabletSummaryPage /> : <SummaryPage />}
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/closecase"
+          element={
+            <ProtectedRoute>
+              {isTabletOrDesktop ? <TabletCloseCase /> : <CloseCase />}
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/performance"
+          element={
+            <ProtectedRoute>
+              {isTabletOrDesktop ? <TabletPerformance /> : <PerformancePage />}
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/Treatment Time Range"
+          element={
+            <ProtectedRoute>
+              <TreatmentTimeRange />
+            </ProtectedRoute>
+          }
+        />
 
-        {/* Analysis Routes */}
-        <Route path="/analysis" element={isTabletOrDesktop ? <TabletAnalysisPage /> : <AnalysisPage />} />
-        
-        {/* Summary Routes */}
-        <Route path="/summary" element={isTabletOrDesktop ? <TabletSummaryPage /> : <SummaryPage />} />
-
-        {/* Close Case Routes */}
-        <Route path="/closecase" element={isTabletOrDesktop ? <TabletCloseCase /> : <CloseCase />} />
-
-        {/* Landing Routes */}
-        <Route path="/landing" element={<Landpage />} />
-
-        {/* Login Routes */}
-        <Route path="/loginpage" element={<LoginPage />} />
-
-        {/* Signup Routes */}
-        <Route path="/signuppage" element={<SignupPage />} />
-
-        {/* Performance Routes */}
-        <Route path="/performance" element={isTabletOrDesktop ? <TabletPerformance /> : <PerformancePage />} />
-
-        
-
-
-        {/* Treatment Time Range Routes */}
-        <Route path="/Treatment Time Range" element={<TreatmentTimeRange />} />
-
-
-
-
-
-
-
-
+        {/* Catch all route */}
+        <Route
+          path="/"
+          element={isAuthenticated() ? (
+            isTabletOrDesktop ? <TabletHomepage /> : <HomePage />
+          ) : (
+            <Navigate to="/landpage" replace />
+          )}
+        />
       </Routes>
     </div>
   );

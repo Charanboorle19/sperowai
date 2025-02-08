@@ -12,7 +12,6 @@ const HomePage = () => {
   const isTabletOrDesktop = useMediaQuery({ minWidth: 768 });
   const navigate = useNavigate();
 
-
   return (
     <div className="min-h-screen bg-[#F7F8F9]">
       {/* Headers */}

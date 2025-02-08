@@ -4,13 +4,21 @@ import { FaUserCircle, FaChevronRight } from 'react-icons/fa';
 import Profile from '../assets/doctor.jpg';
 import { profileData, clearProfileData } from '../data/profileData';
 import { useNavigate } from 'react-router-dom';
+import apiService from '../services/api/apiService';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    clearProfileData();
-    navigate('/landing');
+  const handleLogout = async () => {
+    try {
+      await apiService.logout();
+    } catch (error) {
+      console.error("Logout API error:", error);
+    } finally {
+      // Always clear local storage and navigate, even if API call fails
+      localStorage.removeItem('jwt_token');
+      navigate('/landing');
+    }
   };
 
   const handleBack = () => {
@@ -110,7 +118,7 @@ const ProfilePage = () => {
         {/* Version Info */}
         <div className="mt-8 text-center text-gray-400 text-sm">
           <p>Version 1.0.0</p>
-          <p>© 2024 Sperow. All rights reserved.</p>
+          <p> 2024 Sperow. All rights reserved.</p>
         </div>
       </div>
     </div>

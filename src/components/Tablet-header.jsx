@@ -14,6 +14,9 @@ const TabletHeader = () => {
       case 'profile':
         navigate('/profile');
         break;
+      case 'home':
+        navigate('/');
+        break;
       default:
         navigate('/');
     }

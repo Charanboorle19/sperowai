@@ -50,7 +50,7 @@ const LandPage = () => {
         </div>
         <div className="flex gap-3">
           <button 
-            onClick={() => navigate('/loginpage')}
+            onClick={() => navigate('/login')}
             className="px-5 py-2 text-[#3973EB] font-medium hover:bg-blue-50 rounded-lg transition-colors"
           >
             Log In
