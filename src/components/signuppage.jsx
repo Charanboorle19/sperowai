@@ -1,45 +1,43 @@
 import React, { useState } from 'react';
 import { IoArrowBack } from 'react-icons/io5';
 import { updateProfileData } from '../data/profileData';
-import Landpage from './Landpage';
-import LoginPage from './loginpage';
+import { useNavigate } from 'react-router-dom';
 
 const SignupPage = () => {
-  const [showLanding, setShowLanding] = useState(false);
-  const [showLogin, setShowLogin] = useState(false);
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
-  if (showLanding) {
-    return <Landpage />;
-  }
-
-  if (showLogin) {
-    return <LoginPage />;
-  }
+  const validateForm = () => {
+    const newErrors = {};
+    if (!email) newErrors.email = 'Please enter your email';
+    if (!username) newErrors.username = 'Please enter a username';
+    if (!password) newErrors.password = 'Please enter a password';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSignup = (e) => {
     e.preventDefault();
-    // Store user data
-    updateProfileData({
-      username: username,
-      name: username,
-      email: email,
-      password: password, // In a real app, this should be properly hashed
-      role: "Doctor"
-    });
-    // Navigate to login page after successful signup
-    setShowLogin(true);
+    if (validateForm()) {
+      updateProfileData({
+        username: username,
+        name: username,
+        email: email,
+        password: password,
+        role: "Doctor"
+      });
+      console.log('Signup successful');
+      navigate('/loginpage');
+    }
   };
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
       {/* Back Button */}
-      <button 
-        onClick={() => setShowLanding(true)}
-        className="p-4"
-      >
+      <button className="p-4" onClick={() => navigate('/landing')}>
         <IoArrowBack className="text-gray-600 text-xl" />
       </button>
 
@@ -66,9 +64,12 @@ const SignupPage = () => {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="appearance-none block w-full px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    className={`appearance-none block w-full px-3 py-2.5 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors`}
                     placeholder="Enter your email"
                   />
+                  {errors.email && (
+                    <p className="mt-1 text-sm text-red-500">{errors.email}</p>
+                  )}
                 </div>
               </div>
 
@@ -85,9 +86,12 @@ const SignupPage = () => {
                     required
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="appearance-none block w-full px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    className={`appearance-none block w-full px-3 py-2.5 border ${errors.username ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors`}
                     placeholder="Choose a username"
                   />
+                  {errors.username && (
+                    <p className="mt-1 text-sm text-red-500">{errors.username}</p>
+                  )}
                 </div>
               </div>
 
@@ -104,9 +108,12 @@ const SignupPage = () => {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="appearance-none block w-full px-3 py-2.5 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    className={`appearance-none block w-full px-3 py-2.5 border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors`}
                     placeholder="Create a password"
                   />
+                  {errors.password && (
+                    <p className="mt-1 text-sm text-red-500">{errors.password}</p>
+                  )}
                 </div>
               </div>
 

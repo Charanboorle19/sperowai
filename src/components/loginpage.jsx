@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
-import { FcGoogle } from 'react-icons/fc';
 import { IoArrowBack } from 'react-icons/io5';
-import HomePage from './Homepage';
-import Landpage from './Landpage';
-import SignupPage from './signuppage';
-import TabletHomepage from './Tablet-homepage';
 import { profileData } from '../data/profileData';
+import { useNavigate } from 'react-router-dom';
 
 const SperowIcon = () => (
   <svg 
@@ -23,31 +19,24 @@ const SperowIcon = () => (
 );
 
 const LoginPage = () => {
-  const [showHome, setShowHome] = useState(false);
-  const [showLanding, setShowLanding] = useState(false);
-  const [showSignup, setShowSignup] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const isTabletOrDesktop = window.matchMedia('(min-width: 780px)').matches;
-
-  if (showHome) {
-    return isTabletOrDesktop ? <TabletHomepage /> : <HomePage />;
-  }
-
-  if (showLanding) {
-    return <Landpage />;
-  }
-
-  if (showSignup) {
-    return <SignupPage />;
-  }
+  const navigate = useNavigate();
 
   const handleLogin = (e) => {
     e.preventDefault();
-    // Check if credentials match
+    
+    // Validate empty fields
+    if (!email || !password) {
+      setError('Please fill in all fields');
+      return;
+    }
+
     if (email === profileData.email && password === profileData.password) {
-      setShowHome(true);
+      // Handle successful login
+      console.log('Login successful');
+      navigate('/'); // Only navigate on successful login
     } else {
       setError('Invalid email or password');
     }
@@ -56,10 +45,7 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
       {/* Back Button */}
-      <button 
-        onClick={() => setShowLanding(true)}
-        className="p-4"
-      >
+      <button className="p-4" onClick={() => navigate('/landing')}>
         <IoArrowBack className="text-gray-600 text-xl" />
       </button>
 
@@ -136,10 +122,6 @@ const LoginPage = () => {
                     Remember me
                   </label>
                 </div>
-
-                <div className="text-sm">
-                  
-                </div>
               </div>
 
               <div>
@@ -157,18 +139,13 @@ const LoginPage = () => {
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-300" />
                 </div>
-                
-              </div>
-
-              <div className="mt-6">
-                
               </div>
             </div>
 
             <p className="text-center mt-6 text-gray-600">
               Don't have an account?{' '}
               <button
-                onClick={() => setShowSignup(true)}
+                onClick={() => navigate('/signuppage')}
                 className="text-[#3973EB] font-medium hover:underline"
               >
                 Sign Up

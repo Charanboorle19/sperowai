@@ -1,9 +1,10 @@
 import React from 'react';
 import { FaRobot, FaChartLine, FaStethoscope } from 'react-icons/fa';
-import LoginPage from './loginpage';
-import SignupPage from './signuppage';
+import { useNavigate } from 'react-router-dom';
+
 
 const SperowIcon = () => (
+   
   <svg 
     xmlns="http://www.w3.org/2000/svg" 
     width={32} 
@@ -19,16 +20,7 @@ const SperowIcon = () => (
 );
 
 const LandPage = () => {
-  const [showLogin, setShowLogin] = React.useState(false);
-  const [showSignup, setShowSignup] = React.useState(false);
-
-  if (showLogin) {
-    return <LoginPage />;
-  }
-
-  if (showSignup) {
-    return <SignupPage />;
-  }
+  const navigate = useNavigate();
 
   const features = [
     {
@@ -58,13 +50,13 @@ const LandPage = () => {
         </div>
         <div className="flex gap-3">
           <button 
-            onClick={() => setShowLogin(true)}
+            onClick={() => navigate('/loginpage')}
             className="px-5 py-2 text-[#3973EB] font-medium hover:bg-blue-50 rounded-lg transition-colors"
           >
             Log In
           </button>
           <button 
-            onClick={() => setShowSignup(true)}
+            onClick={() => navigate('/signuppage')}
             className="px-5 py-2 bg-[#3973EB] text-white font-medium rounded-lg hover:bg-[#3973EB]/90 transition-colors"
           >
             Sign Up
@@ -85,14 +77,12 @@ const LandPage = () => {
           </p>
           <div className="flex gap-4 justify-center">
             <button 
-              onClick={() => setShowSignup(true)}
+              onClick={() => navigate('/loginpage')}
               className="px-6 py-2.5 bg-[#3973EB] text-white font-medium rounded-lg hover:bg-[#3973EB]/90 transition-colors"
             >
               Get Started
             </button>
-            <button className="px-6 py-2.5 border border-[#3973EB] text-[#3973EB] font-medium rounded-lg hover:bg-blue-50 transition-colors">
-              Learn More
-            </button>
+            
           </div>
         </div>
       </div>

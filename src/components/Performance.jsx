@@ -174,7 +174,7 @@ const Performance = () => {
   };
 
   return (
-    <div className="w-full max-w-[360px] mt-2 mx-auto p-3 bg-[#efeefb] rounded-lg">
+    <div className="w-full min-w-[320px] max-w-[750px] mx-auto px-4">
       {/* Efficiency Metrics */}
       <div className="bg-white p-3 rounded-lg mb-4 shadow-sm">
         <div className="flex justify-between items-center">

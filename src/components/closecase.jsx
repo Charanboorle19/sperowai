@@ -1,72 +1,71 @@
 import React, { useState } from 'react';
-import { IoArrowBack } from 'react-icons/io5';
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
-import HomePage from './Homepage';
+import { IoCheckmarkCircle } from 'react-icons/io5';
+import { useNavigate } from 'react-router-dom';
 
-const CloseCase = () => {
-  const [showHomePage, setShowHomePage] = useState(false);
 
-  const handleFinish = () => {
-    setShowHomePage(true);
+const TabletCloseCase = () => {
+  const [isExiting, setIsExiting] = useState(false);
+  const navigate = useNavigate();
+
+  const handleHomeClick = () => {
+    setIsExiting(true);
+    setTimeout(() => {
+      navigate('/', { replace: true });
+      window.location.reload();
+    }, 300);
   };
 
-  if (showHomePage) {
-    return <HomePage />;
-  }
-
   return (
-    <div className="h-screen bg-white flex flex-col items-center overflow-hidden mt-0">
-      {/* Back Button and Title */}
-      <div className="w-full max-w-md pt-6 flex items-center justify-between px-4">
-        <button 
-          onClick={() => window.history.back()}
-          className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-        >
-          <IoArrowBack className="text-[#3973EB] text-xl" />
-        </button>
-        <div className="bg-white shadow-sm rounded-full px-6 py-2">
-          <span className="text-[#3973EB] font-medium">AI Report</span>
-        </div>
-        <div className="w-10"></div>
-      </div>
+    <div className="flex min-h-screen bg-[#F8FAFC]">
+      
+      <div className="flex-1 ">
+        <div className={`min-h-screen flex items-center justify-center p-6 ${
+          isExiting ? 'animate-fadeOut' : 'animate-fadeIn'
+        }`}>
+          <div className="max-w-[800px] w-full">
+            {/* Success Card */}
+            <div className="bg-white rounded-2xl shadow-xl p-10 text-center">
+              {/* Icon */}
+              <div className="flex justify-center mb-8">
+                <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center">
+                  <IoCheckmarkCircle className="text-green-500 text-6xl" />
+                </div>
+              </div>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col items-center justify-between w-full">
-        {/* Top Section */}
-        <div className="w-full flex flex-col items-center pt-16 px-4">
-          {/* Status Message */}
-          <div className="bg-gray-50 rounded-3xl px-8 py-4 mb-6">
-            <h2 className="text-[#3973EB] text-lg font-medium text-center">
-              This Case is Closed and Archived!<br />
-            </h2>
-          </div>
+              {/* Text Content */}
+              <h1 className="text-3xl font-bold text-gray-800 mb-4">
+                Case Closed Successfully
+              </h1>
+              <p className="text-gray-600 text-lg mb-8 max-w-[500px] mx-auto">
+                The patient case has been closed and all relevant information has been saved in your records.
+              </p>
 
-          {/* Lottie Animation */}
-          <div className="w-32 h-32 mb-8">
-            <DotLottieReact
-              src="https://lottie.host/5ea0465e-6797-4bda-99ab-1733f0f0ade2/G8L6efQ4gB.lottie"
-              loop
-              autoplay
-            />
-          </div>
+              {/* Stats Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <div className="bg-gray-50 rounded-xl p-6">
+                  <h3 className="text-gray-600 text-sm mb-2">Total Time</h3>
+                  <p className="text-2xl font-bold text-gray-800">45 mins</p>
+                </div>
+                
+                
+              </div>
 
-          {/* Message */}
-          <p className="text-gray-500 text-center">
-            All set! Ready to move on to the next analysis?
-          </p>
-        </div>
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <button
+                  onClick={() => navigate('/')}
+                  className="px-8 py-3 bg-[#3973EB] text-white rounded-xl hover:bg-blue-600 transition-colors text-lg font-medium"
+                >
+                  Back to Home
+                </button>
+                
+              </div>
+            </div>
 
-        {/* Bottom Success Box */}
-        <div className="w-full bg-[#3973EB] rounded-t-[15px] py-8 px-4">
-          <div className="max-w-md mx-auto text-center text-white">
-            <h3 className="text-xl font-medium mb-2">Fantastic Work, Doctor!</h3>
-           
-            <button 
-              onClick={handleFinish}
-              className="w-48 py-3 bg-white text-[#3973EB] font-medium rounded-xl hover:bg-opacity-90 transition-colors"
-            >
-              Finish
-            </button>
+            {/* Additional Info */}
+            <div className="mt-6 text-center">
+             
+            </div>
           </div>
         </div>
       </div>
@@ -74,4 +73,4 @@ const CloseCase = () => {
   );
 };
 
-export default CloseCase;
+export default TabletCloseCase; 

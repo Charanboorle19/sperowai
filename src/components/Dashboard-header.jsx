@@ -1,11 +1,13 @@
 import React from "react";
+import { useNavigate } from 'react-router-dom';
 import { FaBell, FaUserCircle } from "react-icons/fa";
 import Profile from '../assets/doctor.jpg';
 import { profileData } from '../data/profileData';
 
-const DashboardHeader = ({ onNavigate }) => {
+const DashboardHeader = () => {
+  const navigate = useNavigate();
   return (
-    <header className="w-full max-w-[440px] min-w-[320px] mx-auto">
+    <header className="w-full min-w-[320px] max-w-[750px] mx-auto">
       <div className="w-full h-44 bg-[#3973eb] rounded-bl-[15px] rounded-br-[15px] shadow-[0px_2px_17.8px_rgba(0,0,0,0.25)] border relative">
         {/* Content Section */}
         <div className="w-[90%] h-[61px] absolute top-[20px] left-[5%] flex items-center">
@@ -18,11 +20,11 @@ const DashboardHeader = ({ onNavigate }) => {
 
           {/* Greeting Text */}
           <div className="ml-4 flex flex-col min-w-0">
-            <div className="text-white text-lg sm:text-base font-semibold  truncate">
-              Hello {profileData.username}!
+            <div className="text-white text-lg sm:text-base font-semibold truncate">
+              Dashboard
             </div>
-            <div className="text-[#f4f4f4] text-xs sm:text-sm font-normal ">
-              Let's Start Treating...
+            <div className="text-[#f4f4f4] text-xs sm:text-sm font-normal">
+              View your statistics
             </div>
           </div>
 
@@ -32,7 +34,7 @@ const DashboardHeader = ({ onNavigate }) => {
             
             {/* Profile Icon */}
             <button
-              onClick={() => onNavigate('profile')}
+              onClick={() => navigate('/profile')}
               className="p-2 hover:bg-white/10 rounded-full transition-colors"
             >
               <FaUserCircle className="text-white text-2xl" />
@@ -44,7 +46,7 @@ const DashboardHeader = ({ onNavigate }) => {
         <div className="w-[90%] h-12 absolute bottom-4 left-[5%] flex justify-center space-x-4">
           {/* Home Button */}
           <button 
-            onClick={() => onNavigate('home')}
+            onClick={() => navigate('/')}
             className="flex items-center justify-center w-[40%] bg-white px-4 py-2 rounded-[60px] 
               shadow-[0px_4px_25.1px_rgba(57,115,235,0.68)] border border-[#3973eb]
               hover:scale-[1.02] active:scale-[0.98] transition-transform duration-200"
@@ -68,7 +70,7 @@ const DashboardHeader = ({ onNavigate }) => {
 
           {/* Dashboard Button */}
           <button 
-            onClick={() => onNavigate('dashboard')}
+            onClick={() => navigate('/dashboard')}
             className="flex items-center justify-center w-[40%] bg-white px-4 py-2 rounded-[60px] 
               shadow-[0px_4px_25.1px_rgba(57,115,235,0.68)] border border-[#3973eb]
               hover:scale-[1.02] active:scale-[0.98] transition-transform duration-200"

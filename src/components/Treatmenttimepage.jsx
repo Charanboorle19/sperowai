@@ -1,7 +1,9 @@
 import React from 'react';
 import { FaClock, FaUserClock, FaChartLine, FaArrowLeft } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const TreatmentTimePage = ({ onNavigate }) => {
+  const navigate = useNavigate();
   const timeDistribution = [
     { range: 'Quick Visit', duration: '0-15 min', count: 450, percentage: '35%', color: 'bg-green-100 text-green-600' },
     { range: 'Standard', duration: '15-30 min', count: 580, percentage: '45%', color: 'bg-blue-100 text-blue-600' },
@@ -16,7 +18,7 @@ const TreatmentTimePage = ({ onNavigate }) => {
           <div className="px-4 py-4">
             <div className="flex items-center justify-between mb-6">
               <button 
-                onClick={() => onNavigate('dashboard')}
+                onClick={() => navigate('/dashboard')}
                 className="p-2 hover:bg-gray-100 rounded-full transition-colors sm:hidden"
               >
                 <FaArrowLeft className="text-gray-700 text-xl" />

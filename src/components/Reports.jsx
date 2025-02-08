@@ -16,6 +16,7 @@ import MedicationsCard from './MedicationsCard';
 import TreatmentPlanCard from './TreatmentPlanCard';
 import FollowUpPlanCard from './FollowUpPlanCard';
 import Visualization from './Visualization';
+import { useNavigate } from 'react-router-dom';
 
 // Import patient data
 import patientData from './patient3.json';
@@ -26,6 +27,7 @@ const Reports = ({ onCloseCaseClick, onFollowupScheduled, patientId, isChatActiv
   const [showFollowup, setShowFollowup] = useState(false);
   const [collapsedSections, setCollapsedSections] = useState({});
   const [availableSections, setAvailableSections] = useState([]);
+  const navigate = useNavigate();
   
   // Create refs object at component level
   const sectionRefs = useRef({});
@@ -383,7 +385,7 @@ const Reports = ({ onCloseCaseClick, onFollowupScheduled, patientId, isChatActiv
           <div className="flex gap-2 sm:gap-4">
             <button 
               className="flex-1 py-2 sm:py-3 px-4 sm:px-6 rounded-xl border-2 border-gray-200 text-gray-600 text-sm sm:text-base font-medium hover:bg-gray-50 transition-colors"
-              onClick={onCloseCaseClick}
+              onClick={() => navigate('/closecase')}
             >
               Close Case
             </button>

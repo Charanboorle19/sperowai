@@ -33,12 +33,7 @@ const PerformanceGrowth = ({ onNavigate }) => {
     <div className="min-h-screen bg-[#F8FAFC]">
       <div className="max-w-[440px] mx-auto p-4">
         {/* Back Button */}
-        <button 
-          onClick={handleBack}
-          className="p-2 hover:bg-gray-100 rounded-full transition-colors mb-4 sm:hidden"
-        >
-          <IoArrowBack className="text-gray-600 text-xl" />
-        </button>
+        
 
         {/* Growth Card */}
         <div className="flex justify-center w-full">

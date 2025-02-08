@@ -72,10 +72,7 @@ const Search = () => {
 
   return (
     <div className={`
-      bg-[#d6d9fdb4] rounded-[15px] p-4 md:p-5 
-      w-full mx-auto
-      hover:shadow-md transition-all duration-300
-      relative z-10
+      bg-[#d6d9fdb4] rounded-[15px] p-4 md:p-5 mt-4 mb-4 
     `}>
       <div className="flex items-center gap-3 mb-4">
         <div className="w-8 h-8 md:w-10 md:h-10 bg-purple-100 rounded-full flex items-center justify-center">

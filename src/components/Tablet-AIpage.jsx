@@ -6,11 +6,13 @@ import { MdOutlineFileUpload } from 'react-icons/md';
 import AIpageTop from './AIpage-Top';
 import AIpagemain from './AIpagemain';
 import Upload from './upload';
+import { useNavigate } from 'react-router-dom';
 
 const TabletAIPage = ({ onBack }) => {
   const [activeTab, setActiveTab] = useState('chat');
   const [message, setMessage] = useState('');
   const [isRecording, setIsRecording] = useState(false);
+  const navigate = useNavigate();
 
   const handleSendMessage = () => {
     if (message.trim()) {

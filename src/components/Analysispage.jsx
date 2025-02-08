@@ -1,23 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import { useNavigate } from 'react-router-dom';
 import profileImage from '../assets/doctor.jpg';
-import SummaryPage from './Summarypage';
 
 const Analysispage = ({ onCancel }) => {
-  const [showSummary, setShowSummary] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setShowSummary(true);
+      navigate('/summary');
     }, 5000);
 
-    return () => clearTimeout(timer);
-  }, []);
 
-  if (showSummary) {
-    return <SummaryPage />;
-  }
+    return () => clearTimeout(timer);
+  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-[#f5f5f5] flex flex-col items-center justify-start px-4 py-6 relative">
@@ -79,4 +76,3 @@ const Analysispage = ({ onCancel }) => {
 };
 
 export default Analysispage;
-

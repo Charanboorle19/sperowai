@@ -1,35 +1,12 @@
-import React, { useState } from 'react';
-import { FaHome, FaUserMd, FaClock, FaCalendarCheck } from 'react-icons/fa';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FaUserMd, FaClock, FaCalendarCheck } from 'react-icons/fa';
 import DashboardHeader from './Dashboard-header';
 import PerformanceCard from './PerformanceCard';
 import AverageTimeCard from './AverageTimeCard';
-import PerformanceGrowth from './PerformanceGrowth';
-import HomePage from './Homepage';
-import TreatmentTimePage from './Treatmenttimepage';
 
-const DashboardMain = ({ onNavigate }) => {
-  const [showPerformance, setShowPerformance] = useState(false);
-  const [showTreatmentTime, setShowTreatmentTime] = useState(false);
-  const [isExiting, setIsExiting] = useState(false);
-  const [showHome, setShowHome] = useState(false);
-
-  const handleNavigate = (page) => {
-    if (page === 'performance') {
-      setShowPerformance(true);
-    } else if (page === 'treatment-time') {
-      setShowTreatmentTime(true);
-    } else if (page === 'dashboard') {
-      setShowPerformance(false);
-      setShowTreatmentTime(false);
-    } else if (page === 'home') {
-      setIsExiting(true);
-      setTimeout(() => {
-        setShowHome(true);
-      }, 300);
-    } else {
-      onNavigate(page);
-    }
-  };
+const DashboardMain = () => {
+  const navigate = useNavigate();
 
   const stats = [
     { icon: FaUserMd, title: "Total Patients", value: "1,234", trend: "+12.5%" },
@@ -37,22 +14,10 @@ const DashboardMain = ({ onNavigate }) => {
     { icon: FaCalendarCheck, title: "Completed Cases", value: "892", trend: "+8.1%" }
   ];
 
-  if (showHome) {
-    return <HomePage fromDashboard={true} />;
-  }
-
-  if (showPerformance) {
-    return <PerformanceGrowth onNavigate={handleNavigate} />;
-  }
-
-  if (showTreatmentTime) {
-    return <TreatmentTimePage onNavigate={handleNavigate} />;
-  }
-
   return (
-    <div className={`min-h-screen bg-[#F7F8F9] ${isExiting ? 'animate-fadeOut' : ''}`}>
-      <DashboardHeader onNavigate={handleNavigate} />
-      <div className="px-4 w-full max-w-[440px] mx-auto mt-6">
+    <div className="min-h-screen bg-[#f5f5f5]">
+      <DashboardHeader />
+      <div className="px-4 w-full min-w-[320px] max-w-[750px] mx-auto mt-6">
         {/* Stats Section */}
         <div className="grid grid-cols-1 gap-4 mb-4">
           {stats.map((stat, index) => (
@@ -79,10 +44,10 @@ const DashboardMain = ({ onNavigate }) => {
           ))}
         </div>
 
-        {/* Cards with spacing */}
+        {/* Cards */}
         <div className="space-y-4">
-          <PerformanceCard onNavigate={handleNavigate} />
-          <AverageTimeCard onClick={() => handleNavigate('treatment-time')} />
+          <PerformanceCard />
+          <AverageTimeCard />
         </div>
       </div>
     </div>

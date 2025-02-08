@@ -3,10 +3,21 @@ import { FaTimes } from 'react-icons/fa';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import profileImage from '../assets/doctor.jpg';
 import SummaryPage from './Tablet-SummaryPage';
+import TabletAIpagemain from './Tablet-aipagemain';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const TabletAnalysisPage = ({ onCancel }) => {
   const [showSummary, setShowSummary] = useState(false);
+  const [showAIMain, setShowAIMain] = useState(false);
   const [progress, setProgress] = useState(0);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname !== '/analysis') {
+      navigate('/analysis');
+    }
+  }, [location, navigate]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -23,6 +34,14 @@ const TabletAnalysisPage = ({ onCancel }) => {
     };
   }, []);
 
+  const handleCrossClick = () => {
+    setShowAIMain(true);
+  };
+
+  if (showAIMain) {
+    return <TabletAIpagemain />;
+  }
+
   if (showSummary) {
     return <SummaryPage />;
   }
@@ -33,7 +52,7 @@ const TabletAnalysisPage = ({ onCancel }) => {
         {/* Header */}
         <div className="absolute top-6 right-6">
           <button
-            onClick={onCancel}
+            onClick={handleCrossClick}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
           >
             <FaTimes className="text-gray-600 text-xl" />
@@ -88,7 +107,7 @@ const TabletAnalysisPage = ({ onCancel }) => {
         {/* Cancel Button */}
         <div className="mt-8 text-center">
           <button
-            onClick={onCancel}
+            onClick={handleCrossClick}
             className="px-6 py-2 border-2 border-gray-300 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors"
           >
             Cancel Analysis
@@ -100,4 +119,3 @@ const TabletAnalysisPage = ({ onCancel }) => {
 };
 
 export default TabletAnalysisPage;
-

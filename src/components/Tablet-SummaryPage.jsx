@@ -1,28 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PatientDetails from './PatientDetails';
 import Chat from './Chat';
-import FollowupPage from './followuppage';
-import TabletCloseCase from './Tablet-closecase';
 import Reports from './Reports';
 import ConfirmationPopup from './ConfirmationPopup';
-import Homepage from './Homepage';
-
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const TabletSummaryPage = ({ patientId = 1 }) => {
-  const [showFollowupPage, setShowFollowupPage] = useState(false);
   const [scheduledData, setScheduledData] = useState(null);
-  const [showCloseCase, setShowCloseCase] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const [shouldNavigateHome, setShouldNavigateHome] = useState(false);
-  const [isExiting, setIsExiting] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname !== '/summary') {
+      navigate('/summary');
+    }
+  }, [location, navigate]);
 
   const handleFollowupScheduled = (data) => {
     setScheduledData(data);
-    setShowFollowupPage(true);
+    console.log('Followup scheduled:', data);
   };
 
   const handleCloseCaseClick = () => {
-    setShowCloseCase(true);
+    console.log('Close case clicked');
   };
 
   const handleClose = () => {
@@ -30,28 +31,11 @@ const TabletSummaryPage = ({ patientId = 1 }) => {
   };
 
   const handleConfirmClose = () => {
-    setShouldNavigateHome(true);
+    console.log('Close confirmed');
   };
 
-  if (shouldNavigateHome) {
-    return <Homepage />;
-  }
-
-  if (showFollowupPage && scheduledData) {
-    return (
-      <FollowupPage 
-        scheduledDate={scheduledData.date}
-        scheduledTime={scheduledData.time}
-      />
-    );
-  }
-
-  if (showCloseCase) {
-    return <TabletCloseCase />;
-  }
-
   return (
-    <div className={`min-h-screen mt-10 bg-[#F8FAFC] ${isExiting ? 'animate-slideDown' : ''}`}>
+    <div className="min-h-screen mt-10 bg-[#F8FAFC]">
       {/* Main Container with max-width for larger screens */}
       <div className="max-w-[1200px] mx-auto px-4 md:px-6 lg:px-8">
         <div className="grid md:grid-cols-[1fr,2fr] lg:grid-cols-[1fr,3fr] gap-6">
@@ -97,4 +81,4 @@ const TabletSummaryPage = ({ patientId = 1 }) => {
   );
 };
 
-export default TabletSummaryPage; 
+export default TabletSummaryPage;

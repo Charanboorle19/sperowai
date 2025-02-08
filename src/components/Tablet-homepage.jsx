@@ -9,11 +9,13 @@ import TabletProfile from './Tablet-profile';
 import TabletAIpagemain from './Tablet-aipagemain';
 import TabletHeader from './Tablet-header';
 import { profileData } from '../data/profileData';
+import { useNavigate } from 'react-router-dom';
 
 const TabletHomepage = () => {
   const [currentPage, setCurrentPage] = useState('home');
   const [showAIPage, setShowAIPage] = useState(false);
   const username = profileData.name || 'User';
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleNavigation = (event) => {

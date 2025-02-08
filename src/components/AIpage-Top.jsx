@@ -3,12 +3,14 @@ import profileImage from '../assets/doctor.jpg'; // Replace with your actual ima
 import { FaTimes, FaCamera } from 'react-icons/fa'; // Import the cross icon and camera icon from react-icons
 import AIpageB from './AIpage-Middle'; // Import the AIAnalysisPrompt component
 import UploadCard from './upload';
+import { useNavigate } from 'react-router-dom';
 
 const AIpage = ({ uploadedFiles, setUploadedFiles, onFileRemove, onClose }) => {
   const videoRef = useRef(null);
   const [stream, setStream] = useState(null);
   const [isCapturing, setIsCapturing] = useState(false);
   const [capturedImage, setCapturedImage] = useState(null);
+  const navigate = useNavigate();
 
   const startCamera = async () => {
     try {
@@ -56,7 +58,7 @@ const AIpage = ({ uploadedFiles, setUploadedFiles, onFileRemove, onClose }) => {
       {/* Cross Icon at top-right corner */}
       <div 
         className="absolute top-4 right-4 mt-4 cursor-pointer"
-        onClick={onClose}
+        onClick={() => navigate('/')}
       >
         <FaTimes className="text-[#3973eb] text-xl" />
       </div>

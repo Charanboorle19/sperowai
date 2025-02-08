@@ -1,14 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AIpage from './Tablet-Aitop';
-import UploadCard from './Tablet-upload';
 import Analysispage from './Tablet-AnalysisPage';
-import Homepage from './Tablet-homepage';
 import { IoClose } from 'react-icons/io5';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const TabletAIpagemain = () => {
   const [showAnalysis, setShowAnalysis] = useState(false);
-  const [backToHome, setBackToHome] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname !== '/ai') {
+      navigate('/ai');
+    }
+  }, [location, navigate]);
 
   const handleFileUpload = (files, setUploadingState) => {
     const newFiles = Array.from(files).map(file => ({
@@ -40,12 +46,8 @@ const TabletAIpagemain = () => {
   };
 
   const handleClose = () => {
-    setBackToHome(true);
+    navigate('/');
   };
-
-  if (backToHome) {
-    return <Homepage />;
-  }
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
@@ -74,12 +76,9 @@ const TabletAIpagemain = () => {
                   uploadedFiles={uploadedFiles} 
                   setUploadedFiles={setUploadedFiles}
                   onFileRemove={handleFileRemove}
-                  onClose={handleClose}
                   onUploadComplete={handleUploadComplete}
                 />
               </div>
-              
-              
             </div>
 
             {/* Right Column - Preview Section */}

@@ -1,11 +1,16 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const AverageTimeCard = ({ onClick, className = '' }) => {
+  const navigate = useNavigate();
+
   return (
+
     <div 
-      onClick={onClick}
+      onClick={() => navigate('/Treatment Time Range')}
       className={`bg-white rounded-[20px] p-6  hover:shadow-md transition-all duration-300 relative cursor-pointer ${className}`}
     >
+
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 bg-[#FFF4E5] rounded-full flex items-center justify-center">

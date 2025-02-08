@@ -1,6 +1,7 @@
 import React from 'react';
 import AIbutton from './AIbutton';
 
+
 const TabletAiButton = ({ onClick }) => {
   return (
     <div className="h-auto md:h-60 rounded-2xl shadow-lg p-2">

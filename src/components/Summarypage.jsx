@@ -1,33 +1,20 @@
 import React, { useState } from 'react';
-import { useMediaQuery } from 'react-responsive';
 import PatientDetails from './PatientDetails';
 import Chat from './Chat';
-import FollowupPage from './followuppage';
-import CloseCase from './closecase';
 import Reports from './Reports';
 import ConfirmationPopup from './ConfirmationPopup';
-import Homepage from './Homepage';
-import TabletSummaryPage from './Tablet-SummaryPage';
 
 const SummaryPage = ({ patientId = 1 }) => {
-  const isTabletOrDesktop = useMediaQuery({ minWidth: 768 });
-  const [showFollowupPage, setShowFollowupPage] = useState(false);
   const [scheduledData, setScheduledData] = useState(null);
-  const [showCloseCase, setShowCloseCase] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const [shouldNavigateHome, setShouldNavigateHome] = useState(false);
-  const [isExiting, setIsExiting] = useState(false);
 
   const handleFollowupScheduled = (data) => {
     setScheduledData(data);
-    setShowFollowupPage(true);
+    console.log('Followup scheduled:', data);
   };
 
   const handleCloseCaseClick = () => {
-    setIsExiting(true);
-    setTimeout(() => {
-      setShowCloseCase(true);
-    }, 300);
+    console.log('Close case clicked');
   };
 
   const handleClose = () => {
@@ -35,35 +22,11 @@ const SummaryPage = ({ patientId = 1 }) => {
   };
 
   const handleConfirmClose = () => {
-    setShouldNavigateHome(true);
+    console.log('Close confirmed');
   };
 
-  // For tablet/desktop view
-  if (isTabletOrDesktop) {
-    return <TabletSummaryPage patientId={patientId} />;
-  }
-
-  // Mobile view remains unchanged
-  if (shouldNavigateHome) {
-    return <Homepage />;
-  }
-
-  if (showFollowupPage && scheduledData) {
-    return (
-      <FollowupPage 
-        scheduledDate={scheduledData.date}
-        scheduledTime={scheduledData.time}
-      />
-    );
-  }
-
-  if (showCloseCase) {
-    return <CloseCase />;
-  }
-
   return (
-    <div className={`min-h-screen bg-[#F8FAFC] relative max-w-[440px] mx-auto 
-      ${isExiting ? 'animate-slideDown' : ''}`}>
+    <div className="min-h-screen bg-[#F8FAFC] relative max-w-[440px] mx-auto">
       <PatientDetails patientId={patientId} onClose={handleClose} />
 
       {/* Main Content - Scrollable Area */}

@@ -1,10 +1,23 @@
 import React from 'react';
 import { FaChartLine } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { useMediaQuery } from 'react-responsive';
 
 const PerformanceCard = ({ onNavigate, className = '' }) => {
+  const navigate = useNavigate();
+  const isMobile = useMediaQuery({ maxWidth: 767 });
+
+  const handleClick = () => {
+    if (isMobile) {
+      navigate('/performance');
+    } else {
+      onNavigate('performance');
+    }
+  };
+
   return (
     <div 
-      onClick={() => onNavigate('performance')}
+      onClick={handleClick}
       className={`bg-white rounded-[20px] p-6 hover:shadow-md transition-all duration-300 relative cursor-pointer ${className}`}
     >
       <div className="flex items-center justify-between mb-8 ">
@@ -40,4 +53,4 @@ const PerformanceCard = ({ onNavigate, className = '' }) => {
   );
 };
 
-export default PerformanceCard; 
+export default PerformanceCard;

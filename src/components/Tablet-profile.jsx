@@ -8,17 +8,12 @@ import Landpage from './Landpage';
 import TabletHeader from './Tablet-header';
 
 const TabletProfile = () => {
-  const [showLandingPage, setShowLandingPage] = React.useState(false);
   const navigate = useNavigate();
 
   const handleLogout = () => {
     clearProfileData();
-    setShowLandingPage(true);
+    navigate('/landing');
   };
-
-  if (showLandingPage) {
-    return <Landpage />;
-  }
 
   const profileInfo = {
     name: profileData.name,

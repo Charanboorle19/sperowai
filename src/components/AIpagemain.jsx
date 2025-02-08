@@ -3,12 +3,12 @@ import AIpage from './AIpage-Top';
 import AIpageB from './AIpage-Middle';
 import UploadCard from './upload';
 import Analysispage from './Analysispage';
-import Homepage from './Homepage';
+import { useNavigate } from 'react-router-dom';
 
 const AIpagemain = () => {
   const [showAnalysis, setShowAnalysis] = useState(false);
-  const [backToHome, setBackToHome] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
+  const navigate = useNavigate();
 
   const handleFileUpload = (files, setUploadingState) => {
     const newFiles = Array.from(files).map(file => ({
@@ -41,14 +41,6 @@ const AIpagemain = () => {
     setShowAnalysis(false);
   };
 
-  const handleClose = () => {
-    setBackToHome(true);
-  };
-
-  if (backToHome) {
-    return <Homepage />;
-  }
-
   return (
     <div className="fixed inset-0 bg-[#f5f5f5] animate-fadeIn">
       {!showAnalysis ? (
@@ -58,7 +50,6 @@ const AIpagemain = () => {
               uploadedFiles={uploadedFiles} 
               setUploadedFiles={setUploadedFiles}
               onFileRemove={handleFileRemove}
-              onClose={handleClose}
             />
           </div>
           <div className="w-full px-4">

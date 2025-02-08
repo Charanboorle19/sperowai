@@ -8,17 +8,14 @@ const TabletHeader = () => {
 
   const handleNavigation = (page) => {
     switch(page) {
-      case 'home':
-        navigate('/', { replace: true });
-        break;
       case 'dashboard':
-        navigate('/dashboard', { replace: true });
+        navigate('/dashboard');
         break;
       case 'profile':
-        navigate('/profile', { replace: true });
+        navigate('/profile');
         break;
       default:
-        navigate('/', { replace: true });
+        navigate('/');
     }
   };
 

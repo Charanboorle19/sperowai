@@ -1,10 +1,27 @@
 import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const AiButton = ({ onClick }) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Only show the button on homepage
+  if (location.pathname !== '/') {
+    return null;
+  }
+
+  const handleClick = () => {
+    if (onClick) {
+      onClick(); // Call the onClick prop if provided (for Tablet-homepage)
+    } else {
+      navigate('/ai'); // Default navigation
+    }
+  };
+
   return (
     <button 
-      onClick={onClick}
-      className="w-[130px] h-[60px] px-[18px] py-2.5 bg-[#3973eb] 
+      onClick={handleClick}
+      className="w-[130px] h-[60px] px-[18px] py-2  bg-[#3973eb] 
         rounded-[50px] shadow-[0px_4px_25.100000381469727px_0px_rgba(57,115,235,0.68)] 
         justify-center items-center gap-2 inline-flex cursor-pointer
         transition-all duration-300 ease-in-out
