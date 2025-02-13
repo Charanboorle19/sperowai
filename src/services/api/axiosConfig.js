@@ -3,13 +3,10 @@ import axios from 'axios';
 // Create axios instance with base URL
 const api = axios.create({
     baseURL: process.env.REACT_APP_API_URL || 'https://sperowai.onrender.com', // adjust the port and path according to your backend
-    headers: {
-        'Content-Type': 'application/json'
-    },
     withCredentials: false  // Changed to false since we're using token-based auth
 });
 
-// Request interceptor for adding auth token
+// Request interceptor for adding auth token only
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('jwt_token');
