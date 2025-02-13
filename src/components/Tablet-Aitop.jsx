@@ -30,7 +30,7 @@ const AIpage = () => {
         headers: {
           'Authorization': `Bearer ${token}`
         },
-        file:file
+        body: formData
       });
 
       if (!response.ok) {
