@@ -9,30 +9,28 @@ const PatientSummaryCard = ({ data, isCollapsed, CardHeader }) => {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-sm text-gray-500">Name</p>
-                <p className="font-medium">{data.name}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">UHID</p>
-                <p className="font-medium">{data.uhid}</p>
-              </div>
-              <div>
                 <p className="text-sm text-gray-500">Age</p>
-                <p className="font-medium">{data.age}</p>
+                <p className="font-medium">{data?.age || 'Not Available'}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Gender</p>
-                <p className="font-medium">{data.gender}</p>
+                <p className="font-medium">{data?.gender || 'Not Available'}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-500">Date of Birth</p>
-                <p className="font-medium">{data.dob}</p>
+                <p className="text-sm text-gray-500">Ethnicity</p>
+                <p className="font-medium">{data?.ethnicity || 'Not Available'}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Occupation</p>
+                <p className="font-medium">{data?.occupation || 'Not Available'}</p>
               </div>
             </div>
+            {data?.risk_factors && data.risk_factors.length > 0 && (
             <div>
-              <p className="text-sm text-gray-500">Address</p>
-              <p className="font-medium">{data.address}</p>
+                <p className="text-sm text-gray-500">Risk Factors</p>
+                <p className="font-medium">{data.risk_factors.join(', ')}</p>
             </div>
+            )}
           </div>
         </div>
       )}

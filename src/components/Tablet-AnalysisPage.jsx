@@ -5,11 +5,13 @@ import profileImage from '../assets/doctor.jpg';
 import SummaryPage from './Tablet-SummaryPage';
 import TabletAIpagemain from './Tablet-aipagemain';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const TabletAnalysisPage = ({ onCancel }) => {
   const [showSummary, setShowSummary] = useState(false);
   const [showAIMain, setShowAIMain] = useState(false);
   const [progress, setProgress] = useState(0);
+  const { isLoading } = useSelector(state => state.medicalRecord);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -20,19 +22,27 @@ const TabletAnalysisPage = ({ onCancel }) => {
   }, [location, navigate]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowSummary(true);
-    }, 5000);
+    if (isLoading) {
+      const interval = setInterval(() => {
+        setProgress(prev => {
+          if (prev >= 95) {
+            clearInterval(interval);
+            return 95;
+          }
+          return prev + 1;
+        });
+      }, 300);
 
-    const progressInterval = setInterval(() => {
-      setProgress(prev => Math.min(prev + 2, 100));
-    }, 100);
-
-    return () => {
-      clearTimeout(timer);
-      clearInterval(progressInterval);
-    };
-  }, []);
+      return () => clearInterval(interval);
+    } else if (progress >= 95) {
+      setProgress(100);
+      const timer = setTimeout(() => {
+        setShowSummary(true);
+      }, 500);
+      
+      return () => clearInterval(timer);
+    }
+  }, [isLoading, progress]);
 
   const handleCrossClick = () => {
     setShowAIMain(true);

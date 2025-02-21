@@ -114,6 +114,35 @@ export const apiService = {
             }
         });
         return response.data;
+    },
+
+    chatWithAI: async (question) => {
+        try {
+            const token = localStorage.getItem('jwt_token');
+            if (!token) {
+                throw new Error('No authentication token found');
+            }
+
+            const response = await fetch('https://sperowai.onrender.com/api/chat-with-ai', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ question })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to get AI response');
+            }
+
+            const data = await response.json();
+            return data.response;
+        } catch (error) {
+            console.error('Error in chatWithAI:', error);
+            throw error;
+        }
     }
 };
 

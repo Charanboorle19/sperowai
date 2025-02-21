@@ -1,16 +1,22 @@
 import React from 'react';
 import { FaArrowLeft } from 'react-icons/fa';
-import patientData from './patient3.json';
+import { useSelector } from 'react-redux';
 
 const PatientDetails = ({ onClose }) => {
-  const { patient_demographics: patient } = patientData;
+  const medicalRecord = useSelector(state => state.medicalRecord);
+  const patient = medicalRecord?.summary?.patient_demographics;
+
+  if (!patient) return null;
 
   return (
     <div className="w-full">
       {/* Header Block */}
       <div className="sticky top-0 bg-gradient-to-b from-[#F8FAFC] to-[#F8FAFC]/95 backdrop-blur-sm z-10 py-3">
         <div className="max-w-2xl mx-auto px-4 flex items-center justify-between">
-          <button className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
+          <button 
+            onClick={onClose}
+            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
+          >
             <FaArrowLeft className="text-gray-600 text-lg" />
           </button>
           
@@ -18,7 +24,7 @@ const PatientDetails = ({ onClose }) => {
             AI Report
           </div>
           
-          <div className="w-8"></div> {/* Spacer for alignment */}
+          <div className="w-8"></div>
         </div>
       </div>
 
@@ -28,17 +34,17 @@ const PatientDetails = ({ onClose }) => {
           <div className="flex flex-col">
             <div className="border-b pb-4">
               <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
-                {patient.name}
+                {patient.name || 'N/A'}
               </h2>
               <div className="flex flex-wrap items-center gap-3 sm:gap-6 mt-3">
                 <span className="text-sm text-gray-500">
-                  Age: {patient.age}
+                  Age: {patient.age || 'N/A'}
                 </span>
                 <span className="text-sm text-gray-500">
-                  Sex: {patient.gender}
+                  Sex: {patient.gender || 'N/A'}
                 </span>
                 <span className="text-sm text-gray-500">
-                  UHID: {patient.uhid}
+                  UHID: {patient.uhid || 'N/A'}
                 </span>
               </div>
             </div>

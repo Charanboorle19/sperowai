@@ -1,0 +1,593 @@
+{
+    "consultation_id": "67ad277b5a6ecbc129ae6dd4",
+    "metrics": {
+        "avg_minutes": 1764.11,
+        "max_minutes": 1764.11,
+        "min_minutes": 1764.11,
+        "total_consultations": 1
+    },
+    "summary": {
+        "chief_complaints": {
+            "onset": "11-Sep-2024",
+            "primary": "Preoperative pulmonary clearance for tib fib fracture repair",
+            "progression": "Symptoms have persisted since the fall",
+            "secondary": [
+                "Dry cough",
+                "Dizziness"
+            ],
+            "severity": "Moderate"
+        },
+        "diagnosis": {
+            "differential_diagnoses": [
+                "Not Available"
+            ],
+            "primary": {
+                "basis": [
+                    "Clinical findings",
+                    "Imaging results"
+                ],
+                "certainty": "Definite",
+                "condition": "Traumatic lumbar L2 and L5 wedge compression fracture",
+                "stage": "Not Applicable"
+            },
+            "ruled_out": [
+                "Not Available"
+            ],
+            "secondary": [
+                {
+                    "condition": "Bilateral pneumothorax",
+                    "impact": "Increased surgical risk",
+                    "relationship": "Complication of trauma"
+                }
+            ]
+        },
+        "follow_up_plan": {
+            "appointments": [
+                {
+                    "preparation": [
+                        "Bring all medical documents"
+                    ],
+                    "purpose": "Post-operative evaluation",
+                    "specialist": "Orthopedic Surgeon",
+                    "timeframe": "7 days post-surgery"
+                },
+                {
+                    "preparation": [
+                        "Not Available"
+                    ],
+                    "purpose": "Pulmonary clearance",
+                    "specialist": "Pulmonologist",
+                    "timeframe": "Before surgery"
+                }
+            ],
+            "care_coordination": [
+                "Coordination between orthopedic and pulmonary teams"
+            ],
+            "monitoring": [
+                "Vital signs at home",
+                "Signs of infection"
+            ],
+            "warning_signs": [
+                "Increased pain",
+                "Fever",
+                "Shortness of breath"
+            ]
+        },
+        "lab_results": {
+            "critical_values": [
+                "WBC Count 17,600 cells/cumm"
+            ],
+            "test_trends": [
+                {
+                    "test_name": "CBC",
+                    "values_over_time": [
+                        {
+                            "clinical_impact": "Normal hemoglobin level",
+                            "timestamp": "11-Sep-2024",
+                            "trend_direction": "Not Available",
+                            "value": "Hemoglobin 13.4"
+                        }
+                    ]
+                },
+                {
+                    "test_name": "WBC Count",
+                    "values_over_time": [
+                        {
+                            "clinical_impact": "Indicates possible infection or inflammation",
+                            "timestamp": "11-Sep-2024",
+                            "trend_direction": "Elevated",
+                            "value": "17,600"
+                        }
+                    ]
+                },
+                {
+                    "test_name": "Creatinine",
+                    "values_over_time": [
+                        {
+                            "clinical_impact": "Monitor renal function",
+                            "timestamp": "11-Sep-2024",
+                            "trend_direction": "Upper limit of normal",
+                            "value": "1.4"
+                        }
+                    ]
+                },
+                {
+                    "test_name": "Blood Urea",
+                    "values_over_time": [
+                        {
+                            "clinical_impact": "Indicates possible dehydration or renal impairment",
+                            "timestamp": "11-Sep-2024",
+                            "trend_direction": "Elevated",
+                            "value": "47"
+                        }
+                    ]
+                },
+                {
+                    "test_name": "Prothrombin Time",
+                    "values_over_time": [
+                        {
+                            "clinical_impact": "May indicate coagulation issues",
+                            "timestamp": "17-Oct-2024",
+                            "trend_direction": "Prolonged",
+                            "value": "16.4"
+                        }
+                    ]
+                },
+                {
+                    "test_name": "INR",
+                    "values_over_time": [
+                        {
+                            "clinical_impact": "Not applicable for anticoagulation therapy",
+                            "timestamp": "17-Oct-2024",
+                            "trend_direction": "Not Applicable",
+                            "value": "1.24"
+                        }
+                    ]
+                }
+            ],
+            "tests": [
+                {
+                    "action_needed": "Not Required",
+                    "clinical_significance": "Normal hemoglobin level",
+                    "name": "CBC",
+                    "reference_range": "13.0-17.0 gm%",
+                    "timestamp": "11-Sep-2024",
+                    "trend": "Not Available",
+                    "unit": "gm%",
+                    "value": "Hemoglobin 13.4"
+                },
+                {
+                    "action_needed": "Monitor and consider further investigation",
+                    "clinical_significance": "Indicates possible infection or inflammation",
+                    "name": "WBC Count",
+                    "reference_range": "4000-11000 cells/cumm",
+                    "timestamp": "11-Sep-2024",
+                    "trend": "Elevated",
+                    "unit": "cells/cumm",
+                    "value": "17,600"
+                },
+                {
+                    "action_needed": "Continue monitoring",
+                    "clinical_significance": "Monitor renal function",
+                    "name": "Creatinine",
+                    "reference_range": "0.6-1.4 mg/dl",
+                    "timestamp": "11-Sep-2024",
+                    "trend": "Upper limit of normal",
+                    "unit": "mg/dl",
+                    "value": "1.4"
+                },
+                {
+                    "action_needed": "Monitor and hydrate",
+                    "clinical_significance": "Indicates possible dehydration or renal impairment",
+                    "name": "Blood Urea",
+                    "reference_range": "10.0-40.0 mg/dl",
+                    "timestamp": "11-Sep-2024",
+                    "trend": "Elevated",
+                    "unit": "mg/dl",
+                    "value": "47"
+                },
+                {
+                    "action_needed": "Further evaluation needed",
+                    "clinical_significance": "May indicate coagulation issues",
+                    "name": "Prothrombin Time",
+                    "reference_range": "11-14 sec",
+                    "timestamp": "17-Oct-2024",
+                    "trend": "Prolonged",
+                    "unit": "sec",
+                    "value": "16.4"
+                },
+                {
+                    "action_needed": "Monitor if on anticoagulants",
+                    "clinical_significance": "Not applicable for anticoagulation therapy",
+                    "name": "INR",
+                    "reference_range": "2-4",
+                    "timestamp": "17-Oct-2024",
+                    "trend": "Not Applicable",
+                    "unit": "Not Applicable",
+                    "value": "1.24"
+                }
+            ]
+        },
+        "medical_entities": {
+            "conditions": [
+                {
+                    "correlations": [
+                        {
+                            "clinical_significance": "Increased surgical risk",
+                            "correlation_strength": "Strong",
+                            "evidence_base": "Clinical findings",
+                            "related_finding": "Bilateral pneumothorax"
+                        }
+                    ],
+                    "first_noted": "11-Sep-2024",
+                    "future_risks": [
+                        {
+                            "monitoring_plan": [
+                                "Regular follow-ups"
+                            ],
+                            "potential_condition": "Chronic pain syndrome",
+                            "preventive_measures": [
+                                "Physical therapy"
+                            ],
+                            "risk_percentage": "Not Available",
+                            "supporting_evidence": "Clinical experience",
+                            "time_frame": "Post-recovery"
+                        }
+                    ],
+                    "name": "Traumatic lumbar fracture",
+                    "risk_factors": [
+                        {
+                            "evidence": "Clinical history",
+                            "factor": "Fall from height",
+                            "impact_percentage": "Not Available",
+                            "mitigation_strategy": "Avoid high places"
+                        }
+                    ],
+                    "severity": "Severe",
+                    "status": "Current",
+                    "treatment_implications": {
+                        "contraindications": [
+                            "High-impact activities"
+                        ],
+                        "expected_outcomes": [
+                            "Improved mobility",
+                            "Pain relief"
+                        ],
+                        "recommended_interventions": [
+                            "Surgery",
+                            "Rehabilitation"
+                        ]
+                    }
+                }
+            ],
+            "medications": [
+                {
+                    "class": "Antibiotic",
+                    "contraindications": [
+                        "Not Available"
+                    ],
+                    "indications": [
+                        "Infection prevention"
+                    ],
+                    "interactions": [
+                        "Not Available"
+                    ],
+                    "monitoring_parameters": [
+                        "Renal function"
+                    ],
+                    "name": "Inj. Amikacin"
+                }
+            ],
+            "procedures": [
+                {
+                    "complications": [
+                        "Not Available"
+                    ],
+                    "date": "Not Available",
+                    "follow_up_needed": "Post-operative evaluation",
+                    "name": "L1-S1 pedicle screw fixation",
+                    "outcome": "Pending",
+                    "type": "Surgical"
+                }
+            ],
+            "vital_signs": [
+                {
+                    "clinical_impact": "Normal blood pressure",
+                    "name": "Blood Pressure",
+                    "status": "Stable",
+                    "timestamp": "11-Sep-2024",
+                    "trend_analysis": {
+                        "pattern": "Stable",
+                        "recommendations": [
+                            "Continue monitoring"
+                        ],
+                        "significance": "No concerns"
+                    },
+                    "unit": "mmHg",
+                    "value": "120/70"
+                },
+                {
+                    "clinical_impact": "Normal pulse rate",
+                    "name": "Pulse Rate",
+                    "status": "Stable",
+                    "timestamp": "11-Sep-2024",
+                    "trend_analysis": {
+                        "pattern": "Stable",
+                        "recommendations": [
+                            "Continue monitoring"
+                        ],
+                        "significance": "No concerns"
+                    },
+                    "unit": "BPM",
+                    "value": "82"
+                }
+            ]
+        },
+        "medical_history": {
+            "allergies": [
+                "No Known Allergy"
+            ],
+            "family_history": [
+                "Not Available"
+            ],
+            "past_conditions": [
+                "Hypertension"
+            ],
+            "social_history": {
+                "environmental_factors": [
+                    "Not Available"
+                ],
+                "habits": [
+                    "Not Available"
+                ],
+                "lifestyle": [
+                    "Not Available"
+                ]
+            },
+            "surgeries": [
+                "Not Available"
+            ]
+        },
+        "medications": {
+            "allergies": [
+                "No Known Allergy"
+            ],
+            "current": [
+                {
+                    "dosage": "750 mg",
+                    "duration": "Not Available",
+                    "frequency": "OD",
+                    "interactions": [
+                        "Not Available"
+                    ],
+                    "monitoring_needs": [
+                        "Renal function"
+                    ],
+                    "name": "Inj. Amikacin",
+                    "purpose": "Antibiotic therapy",
+                    "route": "IV",
+                    "side_effects": [
+                        "Not Available"
+                    ],
+                    "start_date": "Not Available"
+                },
+                {
+                    "dosage": "500 mg",
+                    "duration": "Not Available",
+                    "frequency": "TID",
+                    "interactions": [
+                        "Not Available"
+                    ],
+                    "monitoring_needs": [
+                        "Not Available"
+                    ],
+                    "name": "Inj. Metrogy",
+                    "purpose": "Antibiotic therapy",
+                    "route": "IV",
+                    "side_effects": [
+                        "Not Available"
+                    ],
+                    "start_date": "Not Available"
+                },
+                {
+                    "dosage": "40 mg",
+                    "duration": "Not Available",
+                    "frequency": "OD",
+                    "interactions": [
+                        "Not Available"
+                    ],
+                    "monitoring_needs": [
+                        "Not Available"
+                    ],
+                    "name": "Tab. Pantop",
+                    "purpose": "Proton pump inhibitor",
+                    "route": "Oral",
+                    "side_effects": [
+                        "Not Available"
+                    ],
+                    "start_date": "Not Available"
+                }
+            ],
+            "discontinued": [
+                {
+                    "date_stopped": "Not Available",
+                    "name": "Not Available",
+                    "reason": "Not Available"
+                }
+            ]
+        },
+        "patient_demographics": {
+            "age": "21Y 1M",
+            "ethnicity": "Not Available",
+            "gender": "Male",
+            "occupation": "Not Available",
+            "risk_factors": [
+                "Fall from height",
+                "Trauma"
+            ]
+        },
+        "symptoms_timeline": [
+            {
+                "duration": "Ongoing",
+                "onset": "11-Sep-2024",
+                "progression": "Stable",
+                "severity": "Mild",
+                "symptom": "Dry cough",
+                "triggers": [
+                    "Not Available"
+                ]
+            },
+            {
+                "duration": "Short-lived",
+                "onset": "11-Sep-2024",
+                "progression": "Resolved",
+                "severity": "Moderate",
+                "symptom": "Dizziness",
+                "triggers": [
+                    "Fall from height"
+                ]
+            }
+        ],
+        "treatment_plan": {
+            "immediate_actions": [
+                "Pulmonary clearance for surgery"
+            ],
+            "interventions": [
+                {
+                    "details": "L1-S1 pedicle screw fixation and decompressive laminectomy",
+                    "duration": "Not Applicable",
+                    "expected_outcome": "Stabilization of spine and relief of symptoms",
+                    "frequency": "Single procedure",
+                    "type": "Surgical intervention"
+                }
+            ],
+            "lifestyle_modifications": [
+                "Avoid high-risk activities until cleared"
+            ],
+            "long_term_goals": [
+                "Full recovery from fractures",
+                "Return to normal activities"
+            ],
+            "monitoring_requirements": [
+                "Vital signs",
+                "Renal function",
+                "Pulmonary function"
+            ],
+            "short_term_goals": [
+                "Stabilize pulmonary function",
+                "Prepare for orthopedic surgery"
+            ]
+        },
+        "visualizations": [
+            {
+                "annotations": [
+                    "Decreasing trend indicates recovery"
+                ],
+                "clinical_significance": "Improvement in renal function",
+                "data": {
+                    "x_axis": {
+                        "label": "Date",
+                        "values": [
+                            "11-Sep-2024",
+                            "14-Sep-2024"
+                        ]
+                    },
+                    "y_axis": {
+                        "label": "Creatinine (mg/dl)",
+                        "reference_ranges": [
+                            "0.6-1.4 mg/dl"
+                        ],
+                        "values": [
+                            "1.4",
+                            "1.1"
+                        ]
+                    }
+                },
+                "recommendations": [
+                    "Continue monitoring renal function"
+                ],
+                "source": "Lab Results",
+                "title": "Creatinine Levels Over Time",
+                "type": "Line Chart"
+            },
+            {
+                "annotations": [
+                    "Elevated levels indicate dehydration"
+                ],
+                "clinical_significance": "Monitoring hydration status",
+                "data": {
+                    "x_axis": {
+                        "label": "Date",
+                        "values": [
+                            "11-Sep-2024",
+                            "13-Sep-2024",
+                            "14-Sep-2024"
+                        ]
+                    },
+                    "y_axis": {
+                        "label": "Blood Urea (mg/dl)",
+                        "reference_ranges": [
+                            "10.0-40.0 mg/dl"
+                        ],
+                        "values": [
+                            "47",
+                            "52",
+                            "45"
+                        ]
+                    }
+                },
+                "recommendations": [
+                    "Ensure adequate hydration"
+                ],
+                "source": "Lab Results",
+                "title": "Blood Urea Levels Over Time",
+                "type": "Line Chart"
+            }
+        ],
+        "vital_signs": {
+            "measurements": [
+                {
+                    "clinical_significance": "Normal blood pressure",
+                    "name": "Blood Pressure",
+                    "timestamp": "11-Sep-2024",
+                    "trend": "Not Available",
+                    "unit": "mmHg",
+                    "value": "120/70"
+                },
+                {
+                    "clinical_significance": "Normal pulse rate",
+                    "name": "Pulse Rate",
+                    "timestamp": "11-Sep-2024",
+                    "trend": "Not Available",
+                    "unit": "BPM",
+                    "value": "82"
+                },
+                {
+                    "clinical_significance": "Slightly elevated respiratory rate",
+                    "name": "Respiratory Rate",
+                    "timestamp": "11-Sep-2024",
+                    "trend": "Not Available",
+                    "unit": "Breaths/min",
+                    "value": "22"
+                },
+                {
+                    "clinical_significance": "Normal body temperature",
+                    "name": "Temperature",
+                    "timestamp": "11-Sep-2024",
+                    "trend": "Not Available",
+                    "unit": "F",
+                    "value": "97.4"
+                },
+                {
+                    "clinical_significance": "Normal oxygen saturation",
+                    "name": "Oxygen Saturation",
+                    "timestamp": "11-Sep-2024",
+                    "trend": "Not Available",
+                    "unit": "%",
+                    "value": "99"
+                }
+            ],
+            "overall_stability": "Stable"
+        }
+    }
+}

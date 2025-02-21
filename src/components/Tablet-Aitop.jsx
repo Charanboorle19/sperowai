@@ -1,9 +1,23 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { FaUpload } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { setMedicalRecord, setLoading } from '../store/medicalRecordSlice';
+import apiService from '../services/api/apiService';
 
 const AIpage = () => {
   const [file, setFile] = useState(null);
   const fileInputRef = useRef(null);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const medicalRecord = useSelector(state => state.medicalRecord);
+
+  useEffect(() => {
+    // If there's existing consultation data, redirect to summary
+    if (medicalRecord?.consultation_id && medicalRecord?.summary) {
+      navigate('/summary');
+    }
+  }, [medicalRecord, navigate]);
 
   const handleFileInput = (event) => {
     const selectedFile = event.target.files[0];
@@ -16,6 +30,9 @@ const AIpage = () => {
     if (!file) return;
 
     try {
+      dispatch(setLoading(true));
+      navigate('/analysis'); // Navigate to analysis page for loading animation
+
       const formData = new FormData();
       formData.append('file', file);
       
@@ -24,7 +41,6 @@ const AIpage = () => {
         throw new Error('No authentication token found');
       }
 
-      console.log('Starting file upload...');
       const response = await fetch('https://sperowai.onrender.com/api/process-medical-record', {
         method: 'POST',
         headers: {
@@ -37,12 +53,25 @@ const AIpage = () => {
         throw new Error('Failed to upload file');
       }
 
-      console.log('File uploaded, waiting for processing...');
       const data = await response.json();
       console.log('Processing complete! Response:', data);
-      
+
+      // Store the response in Redux
+      dispatch(setMedicalRecord(data));
+
+      // Check if consultation_id exists and navigate
+      if (data.consultation_id){
+        navigate(`/summary`);
+      } else {
+        console.error('No consultation_id in response:', data);
+        throw new Error('No consultation ID received');
+      }
+
     } catch (error) {
       console.error('Error uploading file:', error);
+      navigate('/ai');
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 
