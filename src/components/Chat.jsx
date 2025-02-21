@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { IoClose } from 'react-icons/io5';
 import { BsArrowRightCircleFill } from 'react-icons/bs';
 import { FaImage, FaFile, FaTimes } from 'react-icons/fa';
 import ImageViewer from './ImageViewer';
+import { apiService } from '../services/api/apiService';
+
+// Storage keys
+const CHAT_HISTORY_KEY = 'chat_history';
 
 const ChatIcon = () => (
   <svg 
@@ -23,21 +27,106 @@ const Chat = () => {
   const [showChat, setShowChat] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState(() => {
+    // Initialize messages from localStorage
+    try {
+      const savedMessages = localStorage.getItem(CHAT_HISTORY_KEY);
+      return savedMessages ? JSON.parse(savedMessages) : [];
+    } catch (error) {
+      console.error('Error loading chat history:', error);
+      return [];
+    }
+  });
   const [showUploadOptions, setShowUploadOptions] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef(null);
 
-  const handleSendMessage = () => {
+  // Save messages to localStorage whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(messages));
+    } catch (error) {
+      console.error('Error saving chat history:', error);
+    }
+  }, [messages]);
+
+  const scrollToBottom = useCallback(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, []);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, scrollToBottom]);
+
+  const clearChatHistory = useCallback(() => {
+    setMessages([]);
+    setUploadedFiles([]);
+    setMessage('');
+    try {
+      localStorage.removeItem(CHAT_HISTORY_KEY);
+    } catch (error) {
+      console.error('Error clearing chat history:', error);
+    }
+  }, []);
+
+  // Clear chat history when consultation is closed
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === 'consultation_id' && !e.newValue) {
+        clearChatHistory();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [clearChatHistory]);
+
+  const handleSendMessage = async () => {
     if (message.trim() || uploadedFiles.length > 0) {
-      setMessages([...messages, {
+      // Add user message
+      const userMessage = {
         text: message,
         files: [...uploadedFiles],
         isUser: true,
-        timestamp: new Date()
-      }]);
+        timestamp: new Date().toISOString() // Use ISO string for better storage
+      };
+      
+      setMessages(prevMessages => [...prevMessages, userMessage]);
       setMessage('');
       setUploadedFiles([]);
+      setIsLoading(true);
+
+      try {
+        // Get AI response
+        const aiResponse = await apiService.chatWithAI(message);
+        
+        // Add AI response
+        setMessages(prevMessages => [
+          ...prevMessages,
+          {
+            text: aiResponse,
+            files: [],
+            isUser: false,
+            timestamp: new Date().toISOString()
+          }
+        ]);
+      } catch (error) {
+        console.error('Error getting AI response:', error);
+        // Add error message
+        setMessages(prevMessages => [
+          ...prevMessages,
+          {
+            text: "Sorry, I couldn't process your message at this time. Please try again.",
+            files: [],
+            isUser: false,
+            timestamp: new Date().toISOString()
+          }
+        ]);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -65,7 +154,10 @@ const Chat = () => {
     setTimeout(() => {
       setShowChat(false);
       setIsClosing(false);
-    }, 300); // Match animation duration
+      setUploadedFiles([]); // Only clear uploaded files
+      setMessage(''); // Only clear current message
+      // Don't clear messages here as we want to persist them
+    }, 300);
   };
 
   // Function to handle image click
@@ -112,9 +204,9 @@ const Chat = () => {
       {/* Chat messages */}
       <div className="space-y-4">
         {messages.map((message, index) => (
-          <div key={index} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+          <div key={`${index}-${message.timestamp}`} className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}>
             <div className={`max-w-[70%] ${
-              message.sender === 'user' 
+              message.isUser 
                 ? 'bg-blue-500 text-white rounded-l-xl rounded-tr-xl' 
                 : 'bg-gray-100 text-gray-800 rounded-r-xl rounded-tl-xl'
             } p-3`}>
@@ -122,6 +214,7 @@ const Chat = () => {
             </div>
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
 
       {/* Chat component */}
@@ -157,25 +250,34 @@ const Chat = () => {
                   <div className="w-3 h-3 bg-[#3973EB] rounded-full"></div>
                   <span className="text-base font-medium text-gray-500">AI Assistant</span>
                 </div>
-                <button 
-                  className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors"
-                  onClick={handleClose}
-                >
-                  <IoClose className="text-gray-500 text-xl" />
-                </button>
+                <div className="flex items-center gap-2">
+                  <button 
+                    className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors"
+                    onClick={clearChatHistory}
+                    title="Clear chat history"
+                  >
+                    <FaTimes className="text-gray-500 text-sm" />
+                  </button>
+                  <button 
+                    className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors"
+                    onClick={handleClose}
+                  >
+                    <IoClose className="text-gray-500 text-xl" />
+                  </button>
+                </div>
               </div>
 
               {/* Messages Container */}
               <div className="h-[400px] sm:h-[450px] overflow-y-auto p-6 space-y-6">
                 {messages.map((msg, msgIndex) => (
                   <div 
-                    key={msgIndex}
+                    key={`${msgIndex}-${msg.timestamp}`}
                     className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}
                   >
                     {msg.files && msg.files.length > 0 ? (
                       <div className="flex flex-wrap gap-2 mb-2">
                         {msg.files.map((file, fileIndex) => (
-                          <div key={fileIndex} className="relative">
+                          <div key={`${msgIndex}-${fileIndex}-${file.name}`} className="relative">
                             {file.type === 'image' ? (
                               <div 
                                 onClick={() => handleImageClick(file.url)}
@@ -204,11 +306,25 @@ const Chat = () => {
                           ? 'bg-gray-100 text-blue-800 rounded-br-none' 
                           : 'bg-gray-100 text-gray-800 rounded-bl-none'
                       }`}>
-                        <p className="text-base leading-relaxed">{msg.text}</p>
+                        <p className="text-base leading-relaxed whitespace-pre-wrap">{msg.text}</p>
                       </div>
                     )}
                   </div>
                 ))}
+                <div ref={messagesEndRef} />
+                
+                {/* Loading indicator */}
+                {isLoading && (
+                  <div className="flex justify-start">
+                    <div className="bg-gray-100 text-gray-800 rounded-r-xl rounded-tl-xl p-4">
+                      <div className="flex space-x-2">
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Input Area */}
@@ -283,11 +399,15 @@ const Chat = () => {
                       className="w-full py-3 px-4 pr-12 bg-gray-50 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-gray-400/20"
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                      onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
+                      disabled={isLoading}
                     />
                     <button 
-                      className="absolute right-3 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-200 rounded-lg transition-colors"
+                      className={`absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-lg transition-colors ${
+                        isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-200'
+                      }`}
                       onClick={handleSendMessage}
+                      disabled={isLoading}
                     >
                       <BsArrowRightCircleFill className="text-gray-700 text-xl" />
                     </button>
@@ -299,7 +419,7 @@ const Chat = () => {
         )}
       </div>
 
-      {/* Image Viewer - Now with highest z-index */}
+      {/* Image Viewer */}
       {selectedImage && (
         <div className="z-[100000]">
           <ImageViewer 

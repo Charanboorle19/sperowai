@@ -450,7 +450,7 @@ const Reports = ({ onCloseCaseClick, onFollowupScheduled, isChatActive }) => {
       dispatch(clearMedicalRecord());
       
       // Clear localStorage
-      localStorage.removeItem('consultation_id');
+      localStorage.removeItem('chat_history');
       localStorage.removeItem('medicalRecord');
       
       navigate('/closecase');
