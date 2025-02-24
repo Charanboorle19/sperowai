@@ -1,9 +1,10 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { IoClose } from 'react-icons/io5';
+import { IoClose, IoSend } from 'react-icons/io5';
 import { BsArrowRightCircleFill } from 'react-icons/bs';
 import { FaImage, FaFile, FaTimes } from 'react-icons/fa';
 import ImageViewer from './ImageViewer';
 import { apiService } from '../services/api/apiService';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 // Storage keys
 const CHAT_HISTORY_KEY = 'chat_history';
@@ -205,13 +206,7 @@ const Chat = () => {
       <div className="space-y-4">
         {messages.map((message, index) => (
           <div key={`${index}-${message.timestamp}`} className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[70%] ${
-              message.isUser 
-                ? 'bg-blue-500 text-white rounded-l-xl rounded-tr-xl' 
-                : 'bg-gray-100 text-gray-800 rounded-r-xl rounded-tl-xl'
-            } p-3`}>
-              {renderMessageContent(message)}
-            </div>
+           
           </div>
         ))}
         <div ref={messagesEndRef} />
@@ -239,7 +234,7 @@ const Chat = () => {
             />
             
             <div 
-              className={`fixed inset-x-0 bottom-0 mx-auto w-full max-w-[400px] sm:w-[400px] bg-white rounded-2xl shadow-xl sm:right-6 sm:left-auto sm:mx-0 ${
+              className={`fixed inset-x-0 bottom-0 ${window.innerWidth > 700 ? 'w-full right-0' : 'w-[calc(100vw-32px)] right-4'} max-w-[1000px] bg-white rounded-t-2xl shadow-lg overflow-hidden ${
                 isClosing ? 'animate-slideDown' : 'animate-slideUp'
               }`}
               style={{ zIndex: 10000 }}
@@ -252,11 +247,10 @@ const Chat = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <button 
-                    className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors"
+                    className="px-3 py-1.5 text-sm text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
                     onClick={clearChatHistory}
-                    title="Clear chat history"
                   >
-                    <FaTimes className="text-gray-500 text-sm" />
+                    Clear All
                   </button>
                   <button 
                     className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors"
@@ -313,16 +307,14 @@ const Chat = () => {
                 ))}
                 <div ref={messagesEndRef} />
                 
-                {/* Loading indicator */}
+                {/* Loading Animation */}
                 {isLoading && (
-                  <div className="flex justify-start">
-                    <div className="bg-gray-100 text-gray-800 rounded-r-xl rounded-tl-xl p-4">
-                      <div className="flex space-x-2">
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                      </div>
-                    </div>
+                  <div className="w-14 h-14">
+                    <DotLottieReact
+                      src="https://lottie.host/933b7f18-54a3-418a-97fe-20ffd9eb7511/B4UuhcVBw0.lottie"
+                      loop
+                      autoplay
+                    />
                   </div>
                 )}
               </div>

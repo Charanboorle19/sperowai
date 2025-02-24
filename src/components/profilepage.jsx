@@ -1,29 +1,54 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { IoMoon, IoLogOut, IoArrowBack } from 'react-icons/io5';
 import { FaUserCircle, FaChevronRight } from 'react-icons/fa';
 import Profile from '../assets/doctor.jpg';
 import { profileData, clearProfileData } from '../data/profileData';
 import { useNavigate } from 'react-router-dom';
 import apiService from '../services/api/apiService';
+import { useSelector, useDispatch } from 'react-redux';
+import { clearMedicalRecord } from '../store/medicalRecordSlice';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 const ProfilePage = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const username = localStorage.getItem('username') || 'User';
+  const email = localStorage.getItem('user_email');
 
   const handleLogout = async () => {
+    setIsLoading(true);
     try {
       await apiService.logout();
-    } catch (error) {
-      console.error("Logout API error:", error);
-    } finally {
-      // Always clear local storage and navigate, even if API call fails
       localStorage.removeItem('jwt_token');
-      navigate('/landing');
+      localStorage.removeItem('username');
+      localStorage.removeItem('user_email');
+      localStorage.removeItem('chat_history');
+      localStorage.removeItem('medicalRecord');
+      dispatch(clearMedicalRecord());
+      navigate('/landpage');
+    } catch (error) {
+      console.error('Logout error:', error);
     }
   };
 
   const handleBack = () => {
     navigate('/');
   };
+
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 bg-white flex flex-col items-center justify-center z-50">
+        <DotLottieReact
+          src="https://lottie.host/07ae7588-f68b-4d0f-ab7f-bf62071bf857/HN3niWc2Jx.lottie"
+          loop
+          autoplay
+          style={{ width: '200px', height: '200px' }}
+        />
+        <p className="mt-4 text-xl text-gray-600 font-medium">Logging out...</p>
+      </div>
+    );
+  }
 
   const profileInfo = {
     name: profileData.name,
@@ -50,7 +75,7 @@ const ProfilePage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] animate-slideUp">
+    <div className="min-h-screen bg-[#F8FAFC] animate-swing-in-left">
       {/* Header with Profile Info */}
       <div className="bg-[#3973EB] text-white rounded-b-[15px] shadow-lg">
         <div className="px-4 py-6">
@@ -71,8 +96,8 @@ const ProfilePage = () => {
                 className="w-full h-full object-cover"
               />
             </div>
-            <h2 className="text-xl font-semibold mb-1">{profileInfo.name}</h2>
-            <p className="text-white/80 text-sm mb-1">@{profileInfo.username}</p>
+            <h2 className="text-xl font-semibold mb-1">{username}</h2>
+            <p className="text-white/80 text-sm mb-1">{email}</p>
             <p className="text-white/80 text-sm mb-3">{profileInfo.role}</p>
           </div>
         </div>

@@ -1,11 +1,12 @@
 import React from "react";
 import { useNavigate } from 'react-router-dom';
-import { FaBell, FaUserCircle } from "react-icons/fa";
+import { FaUserCircle } from "react-icons/fa";
 import Profile from '../assets/doctor.jpg';
 import { profileData } from '../data/profileData';
 
 const Header = () => {
   const navigate = useNavigate();
+  const username = localStorage.getItem('username') || 'User';
 
   return (
     <header className="w-full min-w-[320px] max-w-[750px] mx-auto">
@@ -15,14 +16,14 @@ const Header = () => {
           {/* Profile Picture */}
           <img
             src={Profile}
-            alt={profileData.username}
+            alt="Profile"
             className="w-[48px] h-[48px] rounded-full flex-shrink-0"
           />
 
           {/* Greeting Text */}
           <div className="ml-4 flex flex-col min-w-0">
             <div className="text-white text-lg sm:text-base font-semibold truncate">
-              Hello {profileData.username}!
+              Hello {username}!
             </div>
             <div className="text-[#f4f4f4] text-xs sm:text-sm font-normal">
               Let's Start Treating...
@@ -31,8 +32,6 @@ const Header = () => {
 
           {/* Icons */}
           <div className="ml-auto flex items-center space-x-3 flex-shrink-0">
-            {/* Notification Icon */}
-            
             {/* Profile Icon */}
             <button
               onClick={() => navigate('/profile')}

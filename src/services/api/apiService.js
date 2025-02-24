@@ -7,15 +7,13 @@ export const apiService = {
             const response = await api.post('/auth/login', {
                 email: credentials.email,
                 password: credentials.password
-            }, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
             });
-            if (response.data.token) {
-                localStorage.setItem('jwt_token', response.data.token);
+            
+            if (response.data.access_token) {
+                localStorage.setItem('jwt_token', response.data.access_token);
+                return response.data;
             }
-            return response.data;
+            return null;
         } catch (error) {
             console.error('Login error:', error);
             throw error;

@@ -176,7 +176,7 @@ const Performance = () => {
   return (
     <div className="w-full min-w-[320px] max-w-[750px] mx-auto px-4">
       {/* Efficiency Metrics */}
-      <div className="bg-white p-3 rounded-lg mb-4 shadow-sm">
+      <div className="bg-white p-3 rounded-lg mb-4 shadow-sm animate-swing-in-top">
         <div className="flex justify-between items-center">
           <h2 className="text-sm font-semibold text-black">Efficiency Metrics</h2>
           <select 
@@ -199,7 +199,7 @@ const Performance = () => {
       </div>
 
       {/* Average Treatment Time Block */}
-      <div className="bg-white p-3 rounded-lg shadow-sm">
+      <div className="bg-white p-3 rounded-lg shadow-sm animate-swing-in-top">
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between mb-4">
             <span className="text-sm font-semibold text-gray-800">

@@ -1,105 +1,124 @@
 import React, { useRef, useState } from 'react';
-import profileImage from '../assets/doctor.jpg'; // Replace with your actual image path
-import { FaTimes, FaCamera } from 'react-icons/fa'; // Import the cross icon and camera icon from react-icons
-import AIpageB from './AIpage-Middle'; // Import the AIAnalysisPrompt component
-import UploadCard from './upload';
+import { FaUpload, FaFileAlt, FaTimes, FaImage } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
-const AIpage = ({ uploadedFiles, setUploadedFiles, onFileRemove, onClose }) => {
-  const videoRef = useRef(null);
-  const [stream, setStream] = useState(null);
-  const [isCapturing, setIsCapturing] = useState(false);
-  const [capturedImage, setCapturedImage] = useState(null);
+const AIpage = ({ uploadedFiles, setUploadedFiles, onFileRemove, onUploadComplete }) => {
+  const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
-  const startCamera = async () => {
-    try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: 'environment' }
-      });
-      videoRef.current.srcObject = mediaStream;
-      setStream(mediaStream);
-      setIsCapturing(true);
-    } catch (err) {
-      console.error("Error accessing camera:", err);
+  const handleFileInput = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length > 0) {
+      const newFiles = files.map(file => ({
+        id: Math.random().toString(36).substr(2, 9),
+        file,
+        name: file.name,
+        url: URL.createObjectURL(file)
+      }));
+      setUploadedFiles(prev => [...prev, ...newFiles]);
     }
   };
 
-  const stopCamera = () => {
-    if (stream) {
-      stream.getTracks().forEach(track => track.stop());
-      setStream(null);
-      setIsCapturing(false);
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const files = Array.from(e.dataTransfer.files);
+    if (files.length > 0) {
+      const newFiles = files.map(file => ({
+        id: Math.random().toString(36).substr(2, 9),
+        file,
+        name: file.name,
+        url: URL.createObjectURL(file)
+      }));
+      setUploadedFiles(prev => [...prev, ...newFiles]);
     }
   };
 
-  const takePicture = () => {
-    const canvas = document.createElement('canvas');
-    const video = videoRef.current;
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    canvas.getContext('2d').drawImage(video, 0, 0);
-    const imageUrl = canvas.toDataURL('image/jpeg');
-    setCapturedImage(imageUrl);
-    stopCamera();
+  const handleDragOver = (e) => {
+    e.preventDefault();
   };
 
   return (
-    <div className="min-h-screen bg-[#f5f5f5] flex flex-col items-center justify-start px-4 py-6 relative">
-      {/* Profile at top-left corner */}
-      <div className="absolute top-4 left-4">
-        <img
-          className="w-[54px] h-[54px] rounded-full"
-          src={profileImage}
-          alt="Profile"
+    <div className="space-y-6">
+      {/* Upload Area */}
+      <div 
+        onClick={() => fileInputRef.current?.click()}
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+        className="relative border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-300 
+          hover:border-blue-400 hover:bg-gradient-to-br hover:from-blue-50 hover:to-indigo-50"
+      >
+        <div className="relative z-10">
+          <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl mx-auto mb-4 
+            flex items-center justify-center">
+            <FaUpload className="text-3xl text-white" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">Drop your files here</h3>
+          <p className="text-sm text-gray-500 mb-3">or click to browse</p>
+          <div className="inline-flex items-center gap-2 text-xs text-gray-400 bg-white/50 px-3 py-1.5 rounded-full">
+            <FaFileAlt className="text-blue-500" />
+            Supported: PDF, JPG, PNG
+          </div>
+        </div>
+        
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileInput}
+          accept=".pdf,.jpg,.jpeg,.png"
+          multiple
+          className="hidden"
         />
       </div>
 
-      {/* Cross Icon at top-right corner */}
-      <div 
-        className="absolute top-4 right-4 mt-4 cursor-pointer"
-        onClick={() => navigate('/')}
-      >
-        <FaTimes className="text-[#3973eb] text-xl" />
-      </div>
-
-      {/* AI Now Section at top middle */}
-      <div className="w-32 h-[47px] px-[27px] py-3.5 bg-white rounded-[60px] shadow-[0px_4px_25.1px_rgba(217,225,243,1)] flex justify-center items-center mt-">
-        <div className="text-[#3973eb] text-base font-semibold ">
-          AI Now
-        </div>
-      </div>
-
-      {/* Add the AI Analysis Prompt Section */}
-      <AIpageB />
-
-      {/* Display uploaded files - Below AIpageB with horizontal scroll */}
-      <div className="w-full max-w-md mt-8">
-        {uploadedFiles.length > 0 && (
-          <div className="bg-[#E8E8E8] p-3 rounded-[10px] overflow-x-auto">
-            <div className="flex gap-2 min-w-min">
-              {uploadedFiles.map((file) => (
-                <div key={file.id} className="relative flex-shrink-0">
-                  <img
-                    src={file.url}
-                    alt={file.name}
-                    className="w-[52px] h-[52px] object-cover rounded-md shadow-sm"
-                  />
-                  <button
-                    onClick={() => onFileRemove(file)}
-                    className="absolute -top-2 -right-2 bg-white rounded-full w-6 h-6 flex items-center justify-center shadow-md"
-                  >
-                    <FaTimes className="text-gray-500 text-sm" />
-                  </button>
-                </div>
-              ))}
-            </div>
+      {/* Selected Files */}
+      {uploadedFiles.length > 0 && (
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-base font-semibold text-gray-800">
+              Selected Files
+            </h3>
+            <span className="px-2 py-1 bg-blue-500 text-white text-xs rounded-full">
+              {uploadedFiles.length} files
+            </span>
           </div>
-        )}
-      </div>
+          
+          <div className="grid grid-cols-3 gap-3">
+            {uploadedFiles.map((file) => (
+              <div key={file.id} className="relative group">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onFileRemove(file);
+                  }}
+                  className="absolute -top-1 -right-1 z-10 w-5 h-5 bg-white 
+                    text-gray-500 rounded-full flex items-center justify-center shadow-md"
+                >
+                  <FaTimes className="text-xs" />
+                </button>
+                
+                <div className="w-full aspect-square rounded-lg overflow-hidden border border-gray-200">
+                  <img 
+                    src={file.url} 
+                    alt={file.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <p className="text-xs text-gray-600 mt-1 truncate">{file.name}</p>
+              </div>
+            ))}
+          </div>
 
-      {/* Upload Card Section */}
-      <UploadCard />
+          <button
+            onClick={onUploadComplete}
+            className="w-full mt-6 bg-gradient-to-r from-blue-500 to-indigo-500 text-white py-3 px-4 rounded-lg 
+              font-medium hover:from-blue-600 hover:to-indigo-600 transition-all duration-300 
+              flex items-center justify-center gap-2"
+          >
+            <FaUpload className="text-lg" />
+            Upload and Process Files
+          </button>
+        </div>
+      )}
     </div>
   );
 };

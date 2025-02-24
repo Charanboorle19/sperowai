@@ -7,7 +7,7 @@ const NotificationPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div className="min-h-screen bg-[#F8FAFC] animate-swing-in-top">
       <div className="max-w-[440px] mx-auto">
         {/* Header */}
         <div className="bg-[#3973EB] text-white rounded-b-[15px] shadow-lg">
