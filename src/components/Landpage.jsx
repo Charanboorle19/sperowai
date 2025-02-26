@@ -24,13 +24,13 @@ const LandPage = () => {
 
   const features = [
     {
-      icon: <FaRobot className="text-2xl" />,
+      icon: <SperowIcon className="text-2xl" />,
       title: "AI-Powered Analysis",
-      description: "Get instant insights with our advanced AI technology"
+      description: "Get a quick and clear overview of patient reports with ease!"
     },
     {
       icon: <FaChartLine className="text-2xl" />,
-      title: "Performance Tracking",
+      title: "Efficiency Metrics",
       description: "Monitor and analyze your medical practice metrics"
     },
     {
@@ -48,18 +48,18 @@ const LandPage = () => {
           <SperowIcon />
           <span className="text-2xl font-bold text-[#3973EB]">Sperow</span>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-2">
           <button 
             onClick={() => navigate('/login')}
-            className="px-5 py-2 text-[#3973EB] font-medium hover:bg-blue-50 rounded-lg transition-colors"
+            className="px-3 py-1.5 md:px-5 md:py-2 text-[#3973EB] text-sm md:text-base font-medium border-2 border-[#3973EB] hover:bg-blue-50 rounded-lg transition-colors"
           >
             Log In
           </button>
           <button 
-            onClick={() => navigate('/signuppage')}
-            className="px-5 py-2 bg-[#3973EB] text-white font-medium rounded-lg hover:bg-[#3973EB]/90 transition-colors"
+            onClick={() => navigate('/login')}
+            className="px-3 py-1.5 md:px-5 md:py-2 bg-[#3973EB] text-white text-sm md:text-base font-medium rounded-lg hover:bg-[#3973EB]/90 transition-colors"
           >
-            Sign Up
+            Contact Us
           </button>
         </div>
       </nav>
@@ -72,17 +72,20 @@ const LandPage = () => {
             <span className="text-[#3973EB]"> AI-Powered</span> Solutions
           </h1>
           <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-            Empower your medical practice with cutting-edge AI technology 
-            for better diagnosis and patient care.
+            Enhance diagnosis and patient care with AI-driven report summaries.
           </p>
-          <div className="flex gap-4 justify-center">
+          <div className="flex flex-col items-center gap-6">
             <button 
-              onClick={() => navigate('/loginpage')}
-              className="px-6 py-2.5 bg-[#3973EB] text-white font-medium rounded-lg hover:bg-[#3973EB]/90 transition-colors"
+              onClick={() => navigate('/login')}
+              className="px-8 py-3 bg-transparent text-[#3973EB] font-semibold rounded-lg border-2 border-[#3973EB] hover:bg-[#3973EB] hover:text-white transition-all duration-300 shadow-sm"
             >
-              Get Started
+              Contact Us
             </button>
-            
+            <div className="border border-gray-200 rounded-xl p-6 max-w-xl bg-white/50 backdrop-blur-sm shadow-sm">
+              <p className="text-gray-700 font-medium leading-relaxed">
+                Are you a healthcare professional? Verify your medical credentials by contacting us to access our AI-powered platform.
+              </p>
+            </div>
           </div>
         </div>
       </div>

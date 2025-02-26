@@ -10,11 +10,12 @@ import TabletAIpagemain from './Tablet-aipagemain';
 import TabletHeader from './Tablet-header';
 import { profileData } from '../data/profileData';
 import { useNavigate } from 'react-router-dom';
+import { apiService } from '../services/api/apiService';
 
 const TabletHomepage = () => {
   const [currentPage, setCurrentPage] = useState('home');
   const [showAIPage, setShowAIPage] = useState(false);
-  const username = profileData.name || 'User';
+  const username = localStorage.getItem('username') || 'User';
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,7 +50,7 @@ const TabletHomepage = () => {
         <div className="flex">
           <TabletHeader />
           <div className="flex-1 ml-[80px]">
-            <div className="min-h-screen bg-[#F8FAFC] p-8">
+            <div className="min-h-screen bg-[#F8FAFC] p-8 animate-swing-in-top">
               {/* Greeting Section */}
               <div className="mb-8">
                 <h1 className="text-3xl font-bold text-gray-800 mb-2">
@@ -93,4 +94,4 @@ const TabletHomepage = () => {
   }
 };
 
-export default TabletHomepage; 
+export default TabletHomepage;

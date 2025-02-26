@@ -1,9 +1,10 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { IoClose } from 'react-icons/io5';
+import { IoClose, IoSend } from 'react-icons/io5';
 import { BsArrowRightCircleFill } from 'react-icons/bs';
 import { FaImage, FaFile, FaTimes } from 'react-icons/fa';
 import ImageViewer from './ImageViewer';
 import { apiService } from '../services/api/apiService';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 // Storage keys
 const CHAT_HISTORY_KEY = 'chat_history';
@@ -23,12 +24,11 @@ const ChatIcon = () => (
   </svg>
 );
 
-const Chat = () => {
+const Chat = ({ consultation_id, onToggle }) => {
   const [showChat, setShowChat] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState(() => {
-    // Initialize messages from localStorage
     try {
       const savedMessages = localStorage.getItem(CHAT_HISTORY_KEY);
       return savedMessages ? JSON.parse(savedMessages) : [];
@@ -43,7 +43,6 @@ const Chat = () => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
-  // Save messages to localStorage whenever they change
   useEffect(() => {
     try {
       localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(messages));
@@ -60,6 +59,22 @@ const Chat = () => {
     scrollToBottom();
   }, [messages, scrollToBottom]);
 
+  const handleClose = () => {
+    setIsClosing(true);
+    onToggle?.(false);
+    setTimeout(() => {
+      setShowChat(false);
+      setIsClosing(false);
+      setUploadedFiles([]);
+      setMessage('');
+    }, 300);
+  };
+
+  const handleChatOpen = () => {
+    setShowChat(true);
+    onToggle?.(true);
+  };
+
   const clearChatHistory = useCallback(() => {
     setMessages([]);
     setUploadedFiles([]);
@@ -71,26 +86,13 @@ const Chat = () => {
     }
   }, []);
 
-  // Clear chat history when consultation is closed
-  useEffect(() => {
-    const handleStorageChange = (e) => {
-      if (e.key === 'consultation_id' && !e.newValue) {
-        clearChatHistory();
-      }
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, [clearChatHistory]);
-
   const handleSendMessage = async () => {
     if (message.trim() || uploadedFiles.length > 0) {
-      // Add user message
       const userMessage = {
         text: message,
         files: [...uploadedFiles],
         isUser: true,
-        timestamp: new Date().toISOString() // Use ISO string for better storage
+        timestamp: new Date().toISOString()
       };
       
       setMessages(prevMessages => [...prevMessages, userMessage]);
@@ -99,10 +101,8 @@ const Chat = () => {
       setIsLoading(true);
 
       try {
-        // Get AI response
         const aiResponse = await apiService.chatWithAI(message);
         
-        // Add AI response
         setMessages(prevMessages => [
           ...prevMessages,
           {
@@ -114,7 +114,6 @@ const Chat = () => {
         ]);
       } catch (error) {
         console.error('Error getting AI response:', error);
-        // Add error message
         setMessages(prevMessages => [
           ...prevMessages,
           {
@@ -149,79 +148,17 @@ const Chat = () => {
     setUploadedFiles(newFiles);
   };
 
-  const handleClose = () => {
-    setIsClosing(true);
-    setTimeout(() => {
-      setShowChat(false);
-      setIsClosing(false);
-      setUploadedFiles([]); // Only clear uploaded files
-      setMessage(''); // Only clear current message
-      // Don't clear messages here as we want to persist them
-    }, 300);
-  };
-
-  // Function to handle image click
   const handleImageClick = (url) => {
     setSelectedImage(url);
   };
 
-  // Function to render message content
-  const renderMessageContent = (message) => {
-    if (message.type === 'image') {
-      return (
-        <div 
-          onClick={() => handleImageClick(message.content)}
-          className="cursor-pointer hover:opacity-90 transition-opacity"
-        >
-          <img 
-            src={message.content} 
-            alt="Chat attachment" 
-            className="max-w-[200px] rounded-lg"
-          />
-        </div>
-      );
-    } else if (message.type === 'file') {
-      return (
-        <div className="flex items-center gap-2 bg-gray-50 p-2 rounded-lg">
-          <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
-            <span className="text-blue-500 text-sm font-medium">
-              {message.content.split('.').pop().toUpperCase()}
-            </span>
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-700 truncate">
-              {message.content}
-            </p>
-          </div>
-        </div>
-      );
-    }
-    return message.content;
-  };
-
   return (
     <div className="relative">
-      {/* Chat messages */}
-      <div className="space-y-4">
-        {messages.map((message, index) => (
-          <div key={`${index}-${message.timestamp}`} className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[70%] ${
-              message.isUser 
-                ? 'bg-blue-500 text-white rounded-l-xl rounded-tr-xl' 
-                : 'bg-gray-100 text-gray-800 rounded-r-xl rounded-tl-xl'
-            } p-3`}>
-              {renderMessageContent(message)}
-            </div>
-          </div>
-        ))}
-        <div ref={messagesEndRef} />
-      </div>
-
       {/* Chat component */}
       <div className="fixed bottom-1 right-6 z-[9999]">
         {!showChat && (
           <button
-            onClick={() => setShowChat(true)}
+            onClick={handleChatOpen}
             className="w-14 h-14 bg-[#3973EB] rounded-full shadow-lg flex items-center justify-center hover:bg-blue-600 transition-all hover:scale-105 active:scale-95"
           >
             <ChatIcon />
@@ -239,7 +176,7 @@ const Chat = () => {
             />
             
             <div 
-              className={`fixed inset-x-0 bottom-0 mx-auto w-full max-w-[400px] sm:w-[400px] bg-white rounded-2xl shadow-xl sm:right-6 sm:left-auto sm:mx-0 ${
+              className={`fixed inset-x-0 bottom-0 w-full min-[750px]:w-[60%] min-[750px]:right-6 bg-white rounded-t-2xl shadow-lg overflow-hidden ${
                 isClosing ? 'animate-slideDown' : 'animate-slideUp'
               }`}
               style={{ zIndex: 10000 }}
@@ -252,11 +189,10 @@ const Chat = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <button 
-                    className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors"
+                    className="px-3 py-1.5 text-sm text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
                     onClick={clearChatHistory}
-                    title="Clear chat history"
                   >
-                    <FaTimes className="text-gray-500 text-sm" />
+                    Clear All
                   </button>
                   <button 
                     className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-full transition-colors"
@@ -313,16 +249,14 @@ const Chat = () => {
                 ))}
                 <div ref={messagesEndRef} />
                 
-                {/* Loading indicator */}
+                {/* Loading Animation */}
                 {isLoading && (
-                  <div className="flex justify-start">
-                    <div className="bg-gray-100 text-gray-800 rounded-r-xl rounded-tl-xl p-4">
-                      <div className="flex space-x-2">
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                      </div>
-                    </div>
+                  <div className="w-14 h-14">
+                    <DotLottieReact
+                      src="https://lottie.host/933b7f18-54a3-418a-97fe-20ffd9eb7511/B4UuhcVBw0.lottie"
+                      loop
+                      autoplay
+                    />
                   </div>
                 )}
               </div>
@@ -432,4 +366,4 @@ const Chat = () => {
   );
 };
 
-export default Chat; 
+export default Chat;

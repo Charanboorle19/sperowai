@@ -106,39 +106,65 @@ export const apiService = {
     },
 
     getYearlyPerformanceStats: async () => {
-        const token = localStorage.getItem('jwt_token');
-        const response = await api.get('/api/performance/stats/yearly', {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        return response.data;
+        try {
+            const response = await api.get('/api/performance/stats/yearly');
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching yearly performance stats:', error);
+            throw error;
+        }
+    },
+
+    getDailyPerformance: async (date) => {
+        try {
+            const response = await api.get(`/api/performance/daily?date=${date}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching daily performance:', error);
+            throw error;
+        }
+    },
+
+    getWeeklyPerformance: async (year, month, week) => {
+        try {
+            const response = await api.get(`/api/performance/stats/weekly`, {
+                params: { year, month, week }
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching weekly performance:', error);
+            throw error;
+        }
+    },
+
+    getMonthlyPerformance: async (year, month) => {
+        try {
+            const response = await api.get(`/api/performance/stats/monthly`, {
+                params: { year, month }
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching monthly performance:', error);
+            throw error;
+        }
+    },
+
+    getYearlyPerformance: async (year) => {
+        try {
+            const response = await api.get(`/api/performance/stats/yearly`, {
+                params: { year }
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching yearly performance:', error);
+            throw error;
+        }
     },
 
     chatWithAI: async (question) => {
         try {
-            const token = localStorage.getItem('jwt_token');
-            if (!token) {
-                throw new Error('No authentication token found');
-            }
-
-            const response = await fetch('https://sperowai.onrender.com/api/chat-with-ai', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ question })
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || 'Failed to get AI response');
-            }
-
-            const data = await response.json();
-            return data.response;
+            const response = await api.post('/api/chat-with-ai', { question });
+            return response.data.response;
         } catch (error) {
             console.error('Error in chatWithAI:', error);
             throw error;

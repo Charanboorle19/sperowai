@@ -2,11 +2,15 @@ import axios from 'axios';
 
 // Create axios instance with base URL
 const api = axios.create({
-    baseURL: process.env.REACT_APP_API_URL || 'https://sperowai.onrender.com', // adjust the port and path according to your backend
-    withCredentials: false  // Changed to false since we're using token-based auth
+    baseURL: 'https://sperowai.onrender.com',
+    timeout: 15000,
+    withCredentials: false,  // Using token-based auth
+    headers: {
+        'Content-Type': 'application/json'
+    }
 });
 
-// Request interceptor for adding auth token only
+// Request interceptor for adding auth token
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('jwt_token');
@@ -24,10 +28,37 @@ api.interceptors.request.use(
 api.interceptors.response.use(
     (response) => response,
     async (error) => {
-        if (error.response?.status === 401) {
-            // Handle token expiration
-            localStorage.removeItem('jwt_token');
-            window.location.href = '/login';
+        if (error.response) {
+            // Handle specific error codes
+            switch (error.response.status) {
+                case 401:
+                    // Unauthorized - clear token and redirect to login
+                    localStorage.removeItem('jwt_token');
+                    localStorage.removeItem('username');
+                    localStorage.removeItem('user_email');
+                    window.location.href = '/login';
+                    break;
+                case 403:
+                    // Forbidden - user doesn't have necessary permissions
+                    console.error('Access forbidden');
+                    break;
+                case 404:
+                    // Not found
+                    console.error('Resource not found');
+                    break;
+                case 500:
+                    // Server error
+                    console.error('Server error');
+                    break;
+                default:
+                    console.error('API Error:', error.response.data);
+            }
+        } else if (error.request) {
+            // Request was made but no response received
+            console.error('No response received:', error.request);
+        } else {
+            // Error in request configuration
+            console.error('Request error:', error.message);
         }
         return Promise.reject(error);
     }

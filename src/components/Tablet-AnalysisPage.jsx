@@ -12,6 +12,7 @@ const TabletAnalysisPage = ({ onCancel }) => {
   const [showAIMain, setShowAIMain] = useState(false);
   const [progress, setProgress] = useState(0);
   const { isLoading } = useSelector(state => state.medicalRecord);
+  const medicalRecord = useSelector(state => state.medicalRecord);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -22,30 +23,50 @@ const TabletAnalysisPage = ({ onCancel }) => {
   }, [location, navigate]);
 
   useEffect(() => {
-    if (isLoading) {
-      const interval = setInterval(() => {
+    let progressInterval;
+    let completionTimer;
+
+    const startProgress = () => {
+      progressInterval = setInterval(() => {
         setProgress(prev => {
           if (prev >= 95) {
-            clearInterval(interval);
+            clearInterval(progressInterval);
             return 95;
           }
           return prev + 1;
         });
-      }, 300);
+      }, 100);
+    };
 
-      return () => clearInterval(interval);
-    } else if (progress >= 95) {
-      setProgress(100);
-      const timer = setTimeout(() => {
-        setShowSummary(true);
-      }, 500);
-      
-      return () => clearInterval(timer);
+    const checkCompletion = () => {
+      // Check if we have medical record data
+      const savedData = localStorage.getItem('medicalRecord');
+      if (savedData) {
+        const data = JSON.parse(savedData);
+        if (data.consultation_id) {
+          setProgress(100);
+          completionTimer = setTimeout(() => {
+            navigate('/summary');
+          }, 500);
+        }
+      }
+    };
+
+    if (isLoading) {
+      startProgress();
+      // Check completion after a reasonable time
+      setTimeout(checkCompletion, 3000);
     }
-  }, [isLoading, progress]);
+
+    // Cleanup
+    return () => {
+      if (progressInterval) clearInterval(progressInterval);
+      if (completionTimer) clearTimeout(completionTimer);
+    };
+  }, [isLoading, navigate, medicalRecord]);
 
   const handleCrossClick = () => {
-    setShowAIMain(true);
+    navigate('/ai');
   };
 
   if (showAIMain) {

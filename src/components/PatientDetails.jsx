@@ -13,16 +13,7 @@ const PatientDetails = ({ onClose }) => {
       {/* Header Block */}
       <div className="sticky top-0 bg-gradient-to-b from-[#F8FAFC] to-[#F8FAFC]/95 backdrop-blur-sm z-10 py-3">
         <div className="max-w-2xl mx-auto px-4 flex items-center justify-between">
-          <button 
-            onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
-          >
-            <FaArrowLeft className="text-gray-600 text-lg" />
-          </button>
           
-          <div className="bg-[#3973EB] text-white px-6 py-1.5 rounded-full text-sm font-medium shadow-sm">
-            AI Report
-          </div>
           
           <div className="w-8"></div>
         </div>

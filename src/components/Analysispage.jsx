@@ -1,76 +1,140 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
-import { useNavigate } from 'react-router-dom';
 import profileImage from '../assets/doctor.jpg';
+import SummaryPage from './Summarypage';
+import AIpagemain from './AIpagemain';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
-const Analysispage = ({ onCancel }) => {
+const Analysispage = () => {
+  const [showSummary, setShowSummary] = useState(false);
+  const [showAIMain, setShowAIMain] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const { isLoading } = useSelector(state => state.medicalRecord);
   const navigate = useNavigate();
+  const location = useLocation();
 
+  // Path check effect
   useEffect(() => {
-    const timer = setTimeout(() => {
-      navigate('/summary');
-    }, 5000);
+    if (location.pathname !== '/analysis') {
+      navigate('/analysis');
+    }
+  }, [location, navigate]);
 
+  // Progress and navigation effect
+  useEffect(() => {
+    if (isLoading) {
+      const interval = setInterval(() => {
+        setProgress(prev => {
+          if (prev >= 95) {
+            clearInterval(interval);
+            return 95;
+          }
+          return prev + 1;
+        });
+      }, 300);
 
-    return () => clearTimeout(timer);
-  }, [navigate]);
+      return () => clearInterval(interval);
+    } else if (progress >= 95) {
+      setProgress(100);
+      const timer = setTimeout(() => {
+        setShowSummary(true);
+      }, 500);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading, progress]);
+
+  const handleCrossClick = () => {
+    setShowAIMain(true);
+  };
+
+  // Component rendering based on state
+  if (showAIMain) {
+    return <AIpagemain />;
+  }
+
+  if (showSummary) {
+    return <SummaryPage />;
+  }
 
   return (
-    <div className="min-h-screen bg-[#f5f5f5] flex flex-col items-center justify-start px-4 py-6 relative">
-      {/* Profile at top-left corner */}
-      <div className="absolute top-4 left-4">
-        <img
-          className="w-[54px] h-[54px] rounded-full"
-          src={profileImage}
-          alt="Profile"
-        />
-      </div>
-
-      {/* Cross Icon at top-right corner */}
-      <div 
-        className="absolute top-4 right-4 mt-4 cursor-pointer"
-        onClick={onCancel}
-      >
-        <FaTimes className="text-[#3973eb] text-xl" />
-      </div>
-
-      {/* AI Now Section at top middle */}
-      <div className="w-32 h-[47px] px-[27px] py-3.5 bg-white rounded-[60px] shadow-[0px_4px_25.1px_rgba(217,225,243,1)] flex justify-center items-center mt-">
-        <div className="text-[#3973eb] text-base font-semibold ">
-          AI Now
+    <div className="min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center px-4">
+      <div className="w-full max-w-[440px] bg-white rounded-xl p-6 shadow-md relative">
+        {/* Header */}
+        <div className="absolute top-4 right-4">
+          <button
+            onClick={handleCrossClick}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+          >
+            <FaTimes className="text-gray-600 text-xl" />
+          </button>
         </div>
-      </div>
 
-      {/* Middle Section with Updated Text */}
-      <div className="w-[335px] h-[162px] mt-14 relative">
-        <div className="w-[298px] h-[92px] px-3.5 py-[23px] left-[16px] top-0 absolute bg-white rounded-[30px] justify-center items-center gap-2.5 inline-flex">
-          <div className="w-[269px] text-center text-[#3973eb] text-xl font-semibold ">
-            Preparing Your Reports for Analysis
+        <div className="flex items-center gap-3 mb-6">
+          <img
+            src={profileImage}
+            alt="Profile"
+            className="w-12 h-12 rounded-full"
+          />
+          <div>
+            <h2 className="text-lg font-semibold text-gray-800">AI Analysis in Progress</h2>
+            <p className="text-sm text-gray-500">Processing your medical reports</p>
           </div>
         </div>
 
-        <div className="w-[335px] left-0 top-[114px] absolute text-center text-[#928484] text-sm font-semibold ">
-          Our AI will analyze the reports and provide a comprehensive summary, saving your time and improving accuracy
+        {/* Progress Section */}
+        <div className="text-center space-y-6">
+          <div className="w-[180px] h-[180px] mx-auto relative">
+            <DotLottieReact
+              src="https://lottie.host/ff16e477-249b-4761-a4cc-07b67c56f2a8/UOH3ByVGzS.lottie"
+              loop
+              autoplay
+            />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-center">
+                <span className="text-3xl font-bold text-[#3973eb]">
+                  {progress}%
+                </span>
+                <div className="text-sm text-gray-500">Processing</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm text-gray-600">
+              <span>Analysis Progress</span>
+              <span>{progress}%</span>
+            </div>
+            <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-blue-500 rounded-full transition-all duration-300"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </div>
+
+          <div className="text-center space-y-2">
+            <h3 className="text-lg font-semibold text-gray-800">
+              Analyzing Your Reports
+            </h3>
+            <p className="text-gray-500 text-sm">
+              Our AI is processing your medical reports to provide comprehensive insights and analysis
+            </p>
+          </div>
+        </div>
+
+        {/* Cancel Button */}
+        <div className="mt-6 text-center">
+          <button
+            onClick={handleCrossClick}
+            className="px-6 py-2 border-2 border-gray-300 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors text-sm"
+          >
+            Cancel Analysis
+          </button>
         </div>
       </div>
-
-      {/* Loading Animation */}
-      <div className="w-[200px] h-[200px] mt-8">
-        <DotLottieReact
-          src="https://lottie.host/ff16e477-249b-4761-a4cc-07b67c56f2a8/UOH3ByVGzS.lottie"
-          loop
-          autoplay
-        />
-      </div>
-
-      {/* Cancel Button */}
-      <button 
-        className="fixed bottom-8 w-[260px] h-[51px] bg-white border-2 border-gray-400 rounded-[60px] text-gray-500 text-xl font-semibold  shadow-md hover:bg-gray-400 hover:text-white transition-colors duration-200"
-        onClick={onCancel}
-      >
-        Cancel
-      </button>
     </div>
   );
 };

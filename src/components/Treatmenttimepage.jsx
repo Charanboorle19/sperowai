@@ -11,7 +11,7 @@ const TreatmentTimePage = ({ onNavigate }) => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div className="min-h-screen bg-[#F8FAFC] animate-swing-in-left">
       <div className="max-w-[440px] mx-auto">
         {/* Header */}
         <div className="bg-gradient-to-b from-gray-50 to-white shadow-sm border-b">
