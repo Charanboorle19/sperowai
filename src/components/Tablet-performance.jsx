@@ -29,13 +29,60 @@ ChartJS.register(
 );
 
 const TabletPerformance = () => {
+
+  const [timeRange, setTimeRange] = useState('today');
+  const [metrics, setMetrics] = useState({
+    avg_minutes: 0,
+    max_minutes: 0,
+    min_minutes: 0,
+    total_consultations: 0
+  });
+
   const [viewType, setViewType] = useState('daily'); // 'daily', 'weekly', 'monthly', or 'yearly'
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [performanceData, setPerformanceData] = useState(null);
+
   const { currentAverage, progressPercentage, fastestTime, longestTime } = useMetrics();
   const [dailyData, setDailyData] = useState(null);
+
+  useEffect(() => {
+    const fetchMetrics = async () => {
+      try {
+        const token = localStorage.getItem('jwt_token');
+        const response = await fetch('https://sperowai.onrender.com/api/metrics', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const data = await response.json();
+        setMetrics(data);
+      } catch (error) {
+        console.error('Error fetching metrics:', error);
+      }
+    };
+
+    fetchMetrics();
+  }, []);
+
+  // Format minutes to a more readable format
+  const formatTime = (minutes) => {
+    if (minutes < 60) {
+      return `${Math.round(minutes)} min`;
+    } else {
+      const hours = Math.floor(minutes / 60);
+      const mins = Math.round(minutes % 60);
+      return `${hours}h ${mins}m`;
+    }
+  };
+
+  // Calculate progress percentage based on average time
+  const calculateProgress = () => {
+    const maxExpectedTime = 240; // 4 hours as maximum expected time
+    const progress = (metrics.avg_minutes / maxExpectedTime) * 100;
+    return Math.min(progress, 100); // Cap at 100%
+  };
 
   // Initialize chart data with default values
   const defaultChartData = {
@@ -174,6 +221,7 @@ const TabletPerformance = () => {
   };
 
   // Chart options
+
   const options = {
     responsive: true,
     maintainAspectRatio: false,
@@ -371,105 +419,38 @@ const TabletPerformance = () => {
 
             <div className="flex flex-col items-center mb-6">
               <div className="text-3xl font-bold text-[#1662cc]">
-                {(() => {
-                  switch (viewType) {
-                    case 'daily':
-                      return performanceData?.averageTreatmentTime;
-                    case 'weekly':
-                      return performanceData?.weeklyAverage;
-                    case 'monthly':
-                      return performanceData?.monthlyAverage;
-                    case 'yearly':
-                      return performanceData?.yearlyAverage;
-                    default:
-                      return '--';
-                  }
-                })() || '--'} min
+
+                {formatTime(metrics.avg_minutes)}
               </div>
               <div className="text-sm text-gray-500">
-                {viewType === 'daily' ? 'Daily' : viewType === 'weekly' ? 'Weekly' : viewType === 'monthly' ? 'Monthly' : 'Yearly'} Average
+                Current Average ({metrics.total_consultations} consultations)
+
               </div>
               
               <div className="w-full h-2 bg-gray-100 rounded-full mt-4">
                 <div 
                   className="h-full bg-[#1662cc] rounded-full transition-all duration-500"
-                  style={{ 
-                    width: `${(() => {
-                      switch (viewType) {
-                        case 'daily':
-                          return performanceData?.progressPercentage;
-                        case 'weekly':
-                          return performanceData?.weeklyProgress;
-                        case 'monthly':
-                          return performanceData?.monthlyProgress;
-                        case 'yearly':
-                          return performanceData?.yearlyProgress;
-                        default:
-                          return 0;
-                      }
-                    })() || 0}%` 
-                  }}
+
+                  style={{ width: `${calculateProgress()}%` }}
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <div className="bg-green-50 rounded-lg p-3 text-center">
                 <div className="text-lg font-semibold text-[#24844e]">
-                  {(() => {
-                    switch (viewType) {
-                      case 'daily':
-                        return performanceData?.fastestTime;
-                      case 'weekly':
-                        return performanceData?.weeklyFastest;
-                      case 'monthly':
-                        return performanceData?.monthlyFastest;
-                      case 'yearly':
-                        return performanceData?.yearlyFastest;
-                      default:
-                        return '--';
-                    }
-                  })() || '--'} min
+
+                  {formatTime(metrics.min_minutes)}
                 </div>
-                <div className="text-xs text-gray-500">Fastest</div>
-              </div>
-              <div className="bg-blue-50 rounded-lg p-3 text-center">
-                <div className="text-lg font-semibold text-[#1662cc]">
-                  {(() => {
-                    switch (viewType) {
-                      case 'daily':
-                        return performanceData?.averageTreatmentTime;
-                      case 'weekly':
-                        return performanceData?.weeklyAverage;
-                      case 'monthly':
-                        return performanceData?.monthlyAverage;
-                      case 'yearly':
-                        return performanceData?.yearlyAverage;
-                      default:
-                        return '--';
-                    }
-                  })() || '--'} min
-                </div>
-                <div className="text-xs text-gray-500">Average</div>
+                <div className="text-xs text-gray-600">Fastest</div>
+
               </div>
               <div className="bg-red-50 rounded-lg p-3 text-center">
-                <div className="text-lg font-semibold text-[#dc2626]">
-                  {(() => {
-                    switch (viewType) {
-                      case 'daily':
-                        return performanceData?.longestTime;
-                      case 'weekly':
-                        return performanceData?.weeklyLongest;
-                      case 'monthly':
-                        return performanceData?.monthlyLongest;
-                      case 'yearly':
-                        return performanceData?.yearlyLongest;
-                      default:
-                        return '--';
-                    }
-                  })() || '--'} min
+
+                <div className="text-lg font-semibold text-red-600">
+                  {formatTime(metrics.max_minutes)}
                 </div>
-                <div className="text-xs text-gray-500">Longest</div>
+                <div className="text-xs text-gray-600">Longest</div>
               </div>
             </div>
           </div>

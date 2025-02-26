@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -23,23 +23,57 @@ import CloseCase from './components/closecase';
 import PerformancePage from './components/Performancepage';
 import TreatmentTimeRange from './components/Treatmenttimepage';
 import Landpage from './components/Landpage';
+import { useDispatch } from 'react-redux';
+import apiService from './services/api/apiService';
 
 function App() {
   const isTabletOrDesktop = useMediaQuery({ minWidth: 768 });
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useDispatch();
 
-  // Function to check if user is logged in
-  const isAuthenticated = () => {
-    const token = localStorage.getItem('jwt_token');
-    if (!token) return false;
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const token = localStorage.getItem('jwt_token');
+        if (!token) {
+          setIsAuthenticated(false);
+          setIsLoading(false);
+          return;
+        }
 
-    try {
-      const decodedToken = jwtDecode(token);
-      const currentTime = Date.now() / 1000;
-      return decodedToken.exp > currentTime;
-    } catch {
-      return false;
-    }
-  };
+        // Call your authentication verification endpoint
+        const response = await fetch('http://localhost:5002/api/verify-token', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          setIsAuthenticated(true);
+        } else {
+          localStorage.removeItem('jwt_token');
+          setIsAuthenticated(false);
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        localStorage.removeItem('jwt_token');
+        setIsAuthenticated(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#F7F8F9]">
@@ -118,11 +152,13 @@ function App() {
         {/* Catch all route */}
         <Route
           path="/"
-          element={isAuthenticated() ? (
-            isTabletOrDesktop ? <TabletHomepage /> : <HomePage />
-          ) : (
-            <Navigate to="/landpage" replace />
-          )}
+          element={
+            <ProtectedRoute>
+              {isTabletOrDesktop ? <TabletHomepage /> : <HomePage />}
+            </ProtectedRoute>
+          }
+            
+          
         />
       </Routes>
     </div>

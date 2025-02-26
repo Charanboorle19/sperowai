@@ -2,7 +2,10 @@ import React, { useRef, useState, useEffect } from 'react';
 import { FaUpload, FaFileAlt, FaImage, FaTimes } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { setMedicalRecord, setLoading } from '../store/medicalRecordSlice';
+
+import { setMedicalRecord, setLoading, fetchVisualizations } from '../store/medicalRecordSlice';
+import apiService from '../services/api/apiService';
+
 
 const AIpage = () => {
   const [file, setFile] = useState(null);
@@ -58,9 +61,17 @@ const AIpage = () => {
       // Store the response in Redux
       dispatch(setMedicalRecord(data));
 
-      // Check if consultation_id exists and navigate
-      if (data.consultation_id){
-        navigate(`/summary`);
+      // Fetch visualizations after processing medical record
+      if (data.consultation_id) {
+        try {
+          // Dispatch the fetchVisualizations thunk
+          await dispatch(fetchVisualizations(data.visualizations)).unwrap();
+          navigate(`/summary`);
+        } catch (error) {
+          console.error('Error fetching visualizations:', error);
+          // Still navigate to summary even if visualizations fail
+          navigate(`/summary`);
+        }
       } else {
         console.error('No consultation_id in response:', data);
         throw new Error('No consultation ID received');
