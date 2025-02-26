@@ -8,7 +8,7 @@ import Search from './Search';
 import AiButton from './AIbutton';
 import { useSelector, useDispatch } from 'react-redux';
 import { clearMedicalRecord } from '../store/medicalRecordSlice';
-import apiService from '../services/api/apiService';
+import { apiService } from '../services/api/apiService'; // Fixed import path
 
 const HomePage = () => {
   const isTabletOrDesktop = useMediaQuery({ minWidth: 768 });
@@ -52,38 +52,22 @@ const HomePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F7F8F9] animate-swing-in-left">
-      {/* Headers */}
-      {isTabletOrDesktop ? (
-        <TabletHeader />
-      ) : (
-        <div className="w-full min-w-[320px] max-w-[500px] mx-auto">
-          <MobileHeader />
+    <div className="min-h-screen bg-[#F8FAFC] pb-20">
+      <MobileHeader />
+      <div className="max-w-[750px] mx-auto px-4">
+        <div className="mb-4">
+          <Search />
         </div>
-      )}
-      
-      {/* Homepage specific content */}
-      <div className={`${isTabletOrDesktop ? 'ml-[80px]' : ''}`}>
-        <div className="w-full min-w-[320px] max-w-[500px] mx-auto pb-24">
-          <div className="w-full mt-4 px-4">
-            <Search />
-          </div>
-          <div className="w-full mb-4">
-            <Performance />
-          </div>
-        </div>
+        
+        <Performance />
       </div>
 
-      {/* AI Button */}
-      {!isTabletOrDesktop && (
-        <div 
-          className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[130px] z-[9999]" 
-          style={{ position: 'fixed', bottom: '24px' }}
-          onClick={handleAIButtonClick}
-        >
-          <AiButton />
-        </div>
-      )}
+      <div 
+        className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50"
+        style={{ position: 'fixed', bottom: '24px' }}
+      >
+        <AiButton onClick={handleAIButtonClick} />
+      </div>
     </div>
   );
 };

@@ -88,9 +88,9 @@ const TabletSummaryPage = ({ patientId = 1 }) => {
   };
 
   return (
-    <div className="min-h-screen  bg-[#F8FAFC]">
+    <div className="min-h-screen bg-[#F8FAFC]">
       {/* Main Container with max-width for larger screens */}
-      <div className="max-w-[1200px] mx-auto px-4 md:px-6 lg:px-8">
+      <div className={`max-w-[1200px] mx-auto px-4 md:px-6 lg:px-8 ${isChatActive ? 'blur-sm' : ''}`}>
         <div className="grid md:grid-cols-[1fr,2fr] lg:grid-cols-[1fr,3fr] gap-6">
           {/* Left Column - Patient Details */}
           <div className="md:sticky md:top-0 md:h-screen md:pt-6">
@@ -105,7 +105,7 @@ const TabletSummaryPage = ({ patientId = 1 }) => {
               <div className="flex gap-2 sm:gap-4">
                 <button 
                   data-close-consultation
-                  className="flex-1 py-2 sm:py-3 px-4 sm:px-6 rounded-xl border-2 border-gray-200 text-gray-600 text-sm sm:text-base font-medium hover:bg-blue-500 hover:text-white hover:border-blue-500 transition-all duration-200 ease-in-out"
+                  className="flex-1 py-2 sm:py-3 px-4 sm:px-6 rounded-xl border-2 border-gray-200 text-gray-600 text-sm sm:text-base font-medium hover:bg-gray-500 hover:text-white hover:border-gray-500 transition-all duration-200 ease-in-out"
                   onClick={() => handleCloseConsultation(false)}
                 >
                   Close Consultation
@@ -114,7 +114,7 @@ const TabletSummaryPage = ({ patientId = 1 }) => {
             </div>
           </div>
 
-          {/* Right Column - Reports and Chat */}
+          {/* Right Column - Reports */}
           <div className="space-y-6">
             {/* Reports Section */}
             <div className="bg-white rounded-xl shadow-lg overflow-hidden">
@@ -125,13 +125,13 @@ const TabletSummaryPage = ({ patientId = 1 }) => {
                 isChatActive={isChatActive}
               />
             </div>
-
-            {/* Chat Section - Fixed at bottom on tablet/desktop */}
-            <div className="md:fixed md:bottom-0 md:right-0 md:w-[calc(100%-350px)] lg:w-[calc(100%-400px)] md:max-w-[800px] md:mx-4 lg:mx-8">
-              <Chat patientId={patientId} onChatOpen={() => setIsChatActive(true)} onChatClose={() => setIsChatActive(false)} />
-            </div>
           </div>
         </div>
+      </div>
+
+      {/* Chat Section - Fixed at bottom on tablet/desktop */}
+      <div className="fixed bottom-0 right-0 w-full md:w-[60%] md:max-w-[1800px] md:mx-4 lg:mx-8 z-50">
+        <Chat patientId={patientId} onChatOpen={() => setIsChatActive(true)} onChatClose={() => setIsChatActive(false)} />
       </div>
 
       {/* Confirmation Popup */}

@@ -84,7 +84,7 @@ const Header = () => {
               />
             </svg>
             <span className="text-[#7c7f84] text-sm sm:text-base font-semibold">
-              Dashboard
+              Info
             </span>
           </button>
         </div>

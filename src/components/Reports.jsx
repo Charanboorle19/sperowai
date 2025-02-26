@@ -500,7 +500,7 @@ const Reports = ({ onCloseCaseClick, onFollowupScheduled, isChatActive }) => {
         {summary && (
           <>
             {/* Content with top padding to account for fixed navigation */}
-            <div className="pt-24">
+            <div className="pt-4">
               {availableSections.map(section => (
                 <div 
                   key={section.id} 

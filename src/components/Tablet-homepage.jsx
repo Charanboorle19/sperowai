@@ -10,6 +10,7 @@ import TabletAIpagemain from './Tablet-aipagemain';
 import TabletHeader from './Tablet-header';
 import { profileData } from '../data/profileData';
 import { useNavigate } from 'react-router-dom';
+import { apiService } from '../services/api/apiService';
 
 const TabletHomepage = () => {
   const [currentPage, setCurrentPage] = useState('home');
@@ -93,4 +94,4 @@ const TabletHomepage = () => {
   }
 };
 
-export default TabletHomepage; 
+export default TabletHomepage;
