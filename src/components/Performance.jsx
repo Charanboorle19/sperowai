@@ -16,6 +16,7 @@ import format from 'date-fns/format';
 import { getWeek, getYear, getMonth } from 'date-fns';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
+import { useMetrics } from '../hooks/useMetrics';
 
 ChartJS.register(
   CategoryScale,
@@ -27,30 +28,6 @@ ChartJS.register(
   Legend
 );
 
-// Export these values so they can be used in Tablet-performance
-export const useMetrics = () => {
-  const [currentAverage, setCurrentAverage] = useState(10);
-  const [progressPercentage, setProgressPercentage] = useState(65);
-  const [fastestTime, setFastestTime] = useState(5);
-  const [longestTime, setLongestTime] = useState(15);
-
-  useEffect(() => {
-    const updateMetrics = () => {
-      // Replace with your actual calculations
-      setCurrentAverage(Math.floor(Math.random() * 15) + 5);
-      setProgressPercentage(Math.floor(Math.random() * 100));
-      setFastestTime(Math.floor(Math.random() * 5) + 1);
-      setLongestTime(Math.floor(Math.random() * 10) + 15);
-    };
-
-    updateMetrics();
-    const interval = setInterval(updateMetrics, 300000);
-    return () => clearInterval(interval);
-  }, []);
-
-  return { currentAverage, progressPercentage, fastestTime, longestTime };
-};
-
 const Performance = () => {
   const [viewType, setViewType] = useState('daily');
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -58,7 +35,8 @@ const Performance = () => {
   const [dailyData, setDailyData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { currentAverage, progressPercentage, fastestTime, longestTime } = useMetrics();
+  
+  const { metrics, formatTime, calculateProgress } = useMetrics();
 
   const defaultChartData = {
     labels: [],
@@ -302,7 +280,7 @@ const Performance = () => {
                   {type.charAt(0).toUpperCase() + type.slice(1)}
                 </button>
               ))}
-      </div>
+            </div>
 
             {/* Date Picker */}
             <div className="relative">
@@ -329,7 +307,7 @@ const Performance = () => {
                     </span>
                     <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
+                    </svg>
                   </button>
                 }
               />
@@ -348,12 +326,12 @@ const Performance = () => {
                   <div className="font-semibold mb-1">Error</div>
                   {error}
                 </div>
-            </div>
+              </div>
             )}
             {!loading && !error && !performanceData && (
               <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-50 z-10">
                 <div className="text-gray-500 text-sm">No data available for the selected period</div>
-            </div>
+              </div>
             )}
             <Line options={chartOptions} data={getChartData()} />
           </div>
@@ -444,22 +422,22 @@ const Performance = () => {
             <div className="flex items-center justify-between mb-4">
               <span className="text-lg font-semibold text-gray-800">
                 {viewType === 'daily' ? 'Daily' : viewType === 'weekly' ? 'Weekly' : viewType === 'monthly' ? 'Monthly' : 'Yearly'} Average Treatment Time
-            </span>
+              </span>
               <FaClock className="text-[#84CC16] text-xl" />
             </div>
 
             <div className="flex flex-col items-center mb-6">
               <div className="text-3xl font-bold text-[#1662cc]">
-                {currentAverage} min
+                {formatTime(metrics.avg_minutes)}
               </div>
               <div className="text-sm text-gray-500">
-                {viewType === 'daily' ? 'Daily' : viewType === 'weekly' ? 'Weekly' : viewType === 'monthly' ? 'Monthly' : 'Yearly'} Average
+                Current Average ({metrics.total_consultations} consultations)
               </div>
               
               <div className="w-full h-2 bg-gray-100 rounded-full mt-4">
                 <div 
                   className="h-full bg-[#1662cc] rounded-full transition-all duration-500"
-                  style={{ width: `${progressPercentage}%` }}
+                  style={{ width: `${calculateProgress()}%` }}
                 />
               </div>
             </div>
@@ -467,19 +445,13 @@ const Performance = () => {
             <div className="grid grid-cols-3 gap-4">
               <div className="bg-green-50 rounded-lg p-3 text-center">
                 <div className="text-lg font-semibold text-[#24844e]">
-                  {fastestTime} min
+                  {formatTime(metrics.min_minutes)}
                 </div>
                 <div className="text-xs text-gray-500">Fastest</div>
               </div>
-              <div className="bg-blue-50 rounded-lg p-3 text-center">
-                <div className="text-lg font-semibold text-[#1662cc]">
-                  {currentAverage} min
-                </div>
-                <div className="text-xs text-gray-500">Average</div>
-              </div>
               <div className="bg-red-50 rounded-lg p-3 text-center">
                 <div className="text-lg font-semibold text-[#dc2626]">
-                  {longestTime} min
+                  {formatTime(metrics.max_minutes)}
                 </div>
                 <div className="text-xs text-gray-500">Longest</div>
               </div>

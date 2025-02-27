@@ -13,7 +13,7 @@ import {
   Tooltip,
   Legend
 } from 'chart.js';
-import { useMetrics } from './Performance';
+import { useMetrics } from '../hooks/useMetrics';
 import { apiService } from '../services/api/apiService';
 import format from 'date-fns/format';
 import { getWeek, getYear, getMonth } from 'date-fns';
@@ -31,21 +31,14 @@ ChartJS.register(
 const TabletPerformance = () => {
 
   const [timeRange, setTimeRange] = useState('today');
-  const [metrics, setMetrics] = useState({
-    avg_minutes: 0,
-    max_minutes: 0,
-    min_minutes: 0,
-    total_consultations: 0
-  });
-
   const [viewType, setViewType] = useState('daily'); // 'daily', 'weekly', 'monthly', or 'yearly'
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [performanceData, setPerformanceData] = useState(null);
-
-  const { currentAverage, progressPercentage, fastestTime, longestTime } = useMetrics();
   const [dailyData, setDailyData] = useState(null);
+
+  const { metrics, formatTime, calculateProgress } = useMetrics();
 
   useEffect(() => {
     const fetchMetrics = async () => {
@@ -57,7 +50,7 @@ const TabletPerformance = () => {
           }
         });
         const data = await response.json();
-        setMetrics(data);
+        // setMetrics(data);
       } catch (error) {
         console.error('Error fetching metrics:', error);
       }
@@ -66,23 +59,12 @@ const TabletPerformance = () => {
     fetchMetrics();
   }, []);
 
-  // Format minutes to a more readable format
-  const formatTime = (minutes) => {
-    if (minutes < 60) {
-      return `${Math.round(minutes)} min`;
-    } else {
-      const hours = Math.floor(minutes / 60);
-      const mins = Math.round(minutes % 60);
-      return `${hours}h ${mins}m`;
-    }
-  };
-
   // Calculate progress percentage based on average time
-  const calculateProgress = () => {
-    const maxExpectedTime = 240; // 4 hours as maximum expected time
-    const progress = (metrics.avg_minutes / maxExpectedTime) * 100;
-    return Math.min(progress, 100); // Cap at 100%
-  };
+  // const calculateProgress = () => {
+  //   const maxExpectedTime = 240; // 4 hours as maximum expected time
+  //   const progress = (metrics.avg_minutes / maxExpectedTime) * 100;
+  //   return Math.min(progress, 100); // Cap at 100%
+  // };
 
   // Initialize chart data with default values
   const defaultChartData = {
@@ -109,7 +91,7 @@ const TabletPerformance = () => {
         case 'daily':
           data = await apiService.getDailyPerformance(format(selectedDate, 'yyyy-MM-dd'));
           setDailyData(data);
-          console.log(data);
+          
           break;
         case 'weekly':
           data = await apiService.getWeeklyPerformance(
@@ -117,18 +99,18 @@ const TabletPerformance = () => {
             getMonth(selectedDate) + 1,
             getWeek(selectedDate)
           );
-          console.log(data);
+          
           break;
         case 'monthly':
           data = await apiService.getMonthlyPerformance(
             getYear(selectedDate),
             getMonth(selectedDate) + 1
           );
-          console.log(data);
+          
           break;
         case 'yearly':
           data = await apiService.getYearlyPerformance(getYear(selectedDate));
-          console.log(data);
+          
           break;
       }
       setPerformanceData(data);
@@ -481,8 +463,8 @@ const TabletPerformance = () => {
               })()}
             </div>
             <div className="text-xs text-gray-500">Total Cases</div>
-          </div>
-          
+            </div>
+
           <div className="bg-white rounded-lg p-4 shadow-sm">
             <div className="text-lg font-semibold text-[#1662cc]">
               {(() => {
@@ -506,7 +488,7 @@ const TabletPerformance = () => {
                 : viewType === 'monthly' ? 'Peak Cases/Week'
                 : 'Peak Cases/Month'}
             </div>
-          </div>
+              </div>
 
           <div className="bg-white rounded-lg p-4 shadow-sm">
             <div className="text-lg font-semibold text-[#1662cc]">
@@ -526,7 +508,7 @@ const TabletPerformance = () => {
                     return '0.0';
                 }
               })()}
-            </div>
+              </div>
             <div className="text-xs text-gray-500">
               {viewType === 'daily' ? 'Avg Cases/Hour' 
                 : viewType === 'weekly' ? 'Avg Cases/Day' 
@@ -540,4 +522,4 @@ const TabletPerformance = () => {
   );
 };
 
-export default TabletPerformance;
+export default TabletPerformance; 

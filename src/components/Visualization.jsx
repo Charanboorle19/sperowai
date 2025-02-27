@@ -41,22 +41,13 @@ const chartComponentMap = {
 const Visualization = ({ isCollapsed, CardHeader }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const visualizations = useSelector((state) => {
-    console.log('Full Redux State:', store.getState());
-    console.log('Medical Record State:', state.medicalRecord);
-    console.log('Visualizations from Redux:', state.medicalRecord.visualizations);
+    
     return state.medicalRecord.visualizations || [];
   });
 
   // Debug logs
   useEffect(() => {
-    console.log('Component mounted or visualizations updated');
-    console.log('Current visualizations:', visualizations);
-    console.log('Visualizations length:', visualizations.length);
     
-    if (visualizations.length > 0) {
-      console.log('First visualization:', visualizations[0]);
-      console.log('Current visualization:', visualizations[currentIndex]);
-    }
   }, [visualizations, currentIndex]);
 
   // Reset currentIndex when visualizations change
@@ -76,7 +67,7 @@ const Visualization = ({ isCollapsed, CardHeader }) => {
 
   const formatChartData = (visualization) => {
     if (!visualization) return null;
-    console.log('Formatting visualization:', visualization);
+    
 
     const { data, type, title } = visualization;
     const { x_axis, y_axis } = data;
@@ -183,10 +174,10 @@ const Visualization = ({ isCollapsed, CardHeader }) => {
   };
 
   const currentVisualization = visualizations.length > 0 ? visualizations[currentIndex] : null;
-  console.log('Current visualization:', currentVisualization);
+  
   
   const chartConfig = currentVisualization ? formatChartData(currentVisualization) : null;
-  console.log('Chart config:', chartConfig);
+  
 
   return (
     <div className="bg-white rounded-xl shadow-sm">

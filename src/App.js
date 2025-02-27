@@ -33,7 +33,7 @@ function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const checkAuth = async () => {
+    const checkAuth = () => {
       try {
         const token = localStorage.getItem('jwt_token');
         if (!token) {
@@ -42,19 +42,24 @@ function App() {
           return;
         }
 
-        // Call your authentication verification endpoint
-        const response = await fetch('http://localhost:5002/api/verify-token', {
-          headers: {
-            'Authorization': `Bearer ${token}`
+        // Verify token exists and hasn't expired
+        try {
+          const decodedToken = jwtDecode(token);
+          const currentTime = Date.now() / 1000;
+          
+          if (decodedToken.exp < currentTime) {
+            // Token has expired
+            localStorage.removeItem('jwt_token');
+            setIsAuthenticated(false);
+          } else {
+            setIsAuthenticated(true);
           }
-        });
-
-        if (response.ok) {
-          setIsAuthenticated(true);
-        } else {
-          localStorage.removeItem('jwt_token');
+        } catch (error) {
+          // Invalid token
+          localStorage.removeItem('jwt_token'); 
           setIsAuthenticated(false);
         }
+
       } catch (error) {
         console.error('Auth check failed:', error);
         localStorage.removeItem('jwt_token');
