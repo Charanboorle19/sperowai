@@ -164,62 +164,25 @@ const Performance = () => {
     }
   };
 
-  const chartOptions = {
+  const options = {
     responsive: true,
     maintainAspectRatio: false,
     scales: {
-      y: {
-        beginAtZero: true,
-        grid: {
-          display: true,
-          color: '#E5E7EB',
-          drawBorder: false
-        },
-        ticks: {
-          stepSize: 5,
-          precision: 0,
-          font: {
-            size: 12
-          },
-          color: '#6B7280'
-        },
-        border: {
-          display: false
-        }
-      },
       x: {
         grid: {
           display: false
-        },
-        ticks: {
-          font: {
-            size: 12
-          },
-          color: '#6B7280'
+        }
+      },
+      y: {
+        beginAtZero: true,
+        grid: {
+          color: '#f3f4f6'
         }
       }
     },
     plugins: {
       legend: {
         display: false
-      },
-      tooltip: {
-        backgroundColor: '#1F2937',
-        padding: 12,
-        titleFont: {
-          size: 14,
-          family: 'Raleway'
-        },
-        bodyFont: {
-          size: 13,
-          family: 'Raleway'
-        },
-        callbacks: {
-          label: function(context) {
-            return `${context.parsed.y} Patients`;
-          }
-        },
-        displayColors: false
       }
     }
   };
@@ -260,161 +223,142 @@ const Performance = () => {
   };
 
   return (
-    <div className="w-full min-w-[360px] max-w-[750px] mx-auto px-4 sm:px-6">
-      <div className="w-full flex flex-col gap-4">
-        {/* Efficiency Metrics */}
-        <div className="bg-white rounded-[20px] p-6 shadow-sm w-full -mx-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
-            {/* Time Range Options */}
-            <div className="flex bg-gray-100 p-1.5 rounded-lg w-full overflow-x-auto hide-scrollbar">
-              {['daily', 'weekly', 'monthly', 'yearly'].map((type) => (
-                <button
-                  key={type}
-                  onClick={() => setViewType(type)}
-                  className={`flex-1 min-w-[70px] px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 whitespace-nowrap ${
-                    viewType === type
-                      ? 'bg-white text-blue-600 shadow-sm'
-                      : 'text-gray-600 hover:text-gray-800'
-                  }`}
-                >
-                  {type.charAt(0).toUpperCase() + type.slice(1)}
+    <div className="w-full max-w-full md:max-w-[750px] mx-auto">
+      <div className="bg-white rounded-[20px] p-6 shadow-sm">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
+          {/* Time Range Options */}
+          <div className="flex bg-gray-100 p-1.5 rounded-lg w-full overflow-x-auto hide-scrollbar">
+            {['daily', 'weekly', 'monthly', 'yearly'].map((type) => (
+              <button
+                key={type}
+                onClick={() => setViewType(type)}
+                className={`flex-1 min-w-[70px] px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 whitespace-nowrap ${
+                  viewType === type
+                    ? 'bg-white text-blue-600 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-800'
+                }`}
+              >
+                {type.charAt(0).toUpperCase() + type.slice(1)}
+              </button>
+            ))}
+          </div>
+
+          {/* Date Picker */}
+          <div className="relative w-full">
+            <DatePicker
+              selected={selectedDate}
+              onChange={date => setSelectedDate(date)}
+              {...getDatePickerConfig()}
+              className="w-full bg-white border border-gray-200 text-gray-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              calendarClassName="shadow-lg rounded-lg border-0"
+              showPopperArrow={false}
+              maxDate={new Date()}
+              customInput={
+                <button className="flex items-center gap-2 bg-white border border-gray-200 text-gray-700 rounded-lg px-4 py-2 text-sm hover:border-gray-300 transition-all duration-200">
+                  <span>
+                    {viewType === 'weekly' ? (
+                      (() => {
+                        const firstDayOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+                        const weekNumber = Math.ceil((selectedDate.getDate() + firstDayOfMonth.getDay()) / 7);
+                        return `Week ${weekNumber}, ${format(selectedDate, 'MMM yyyy')}`;
+                      })()
+                    ) : (
+                      format(selectedDate, getDatePickerConfig().dateFormat)
+                    )}
+                  </span>
+                  <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
                 </button>
-              ))}
-            </div>
-
-            {/* Date Picker */}
-            <div className="relative w-full">
-              <DatePicker
-                selected={selectedDate}
-                onChange={date => setSelectedDate(date)}
-                {...getDatePickerConfig()}
-                className="w-full bg-white border border-gray-200 text-gray-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                calendarClassName="shadow-lg rounded-lg border-0"
-                showPopperArrow={false}
-                maxDate={new Date()}
-                customInput={
-                  <button className="flex items-center gap-2 bg-white border border-gray-200 text-gray-700 rounded-lg px-4 py-2 text-sm hover:border-gray-300 transition-all duration-200">
-                    <span>
-                      {viewType === 'weekly' ? (
-                        (() => {
-                          const firstDayOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
-                          const weekNumber = Math.ceil((selectedDate.getDate() + firstDayOfMonth.getDay()) / 7);
-                          return `Week ${weekNumber}, ${format(selectedDate, 'MMM yyyy')}`;
-                        })()
-                      ) : (
-                        format(selectedDate, getDatePickerConfig().dateFormat)
-                      )}
-                    </span>
-                    <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                  </button>
-                }
-              />
-            </div>
+              }
+            />
           </div>
-
-          <div className="w-full h-[200px] relative">
-            {loading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-50 z-10">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-              </div>
-            )}
-            {error && (
-              <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-50 z-10">
-                <div className="text-red-500 text-sm bg-red-50 p-3 rounded-lg border border-red-200 max-w-[80%] text-center">
-                  <div className="font-semibold mb-1">Error</div>
-                  {error}
-                </div>
-              </div>
-            )}
-            {!loading && !error && !performanceData && (
-              <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-50 z-10">
-                <div className="text-gray-500 text-sm">No data available for the selected period</div>
-              </div>
-            )}
-            <Line options={chartOptions} data={getChartData()} />
-          </div>
-
-          {/* Statistics Section */}
-          {((viewType === 'daily' && dailyData) || 
-            (viewType === 'weekly' && performanceData) || 
-            (viewType === 'monthly' && performanceData) ||
-            (viewType === 'yearly' && performanceData)) && (
-            <div className="grid grid-cols-3 gap-4 mt-6">
-              {/* Total Cases */}
-              <div className="bg-white rounded-lg p-4 shadow-sm">
-                <div className="text-lg font-semibold text-[#1662cc]">
-                  {(() => {
-                    switch(viewType) {
-                      case 'daily':
-                        return dailyData?.hourly_metrics?.reduce((sum, metric) => sum + metric.completed_cases, 0) || 0;
-                      case 'weekly':
-                        return performanceData?.totalCases || 0;
-                      case 'monthly':
-                        return performanceData?.totalCases || 0;
-                      case 'yearly':
-                        return performanceData?.totalCases || 0;
-                    }
-                  })()}
-                </div>
-                <div className="text-xs text-gray-500">Total Cases</div>
-              </div>
-
-              {/* Peak Cases */}
-              <div className="bg-white rounded-lg p-4 shadow-sm">
-                <div className="text-lg font-semibold text-[#1662cc]">
-                  {(() => {
-                    switch(viewType) {
-                      case 'daily':
-                        return Math.max(...(dailyData?.hourly_metrics?.map(metric => metric.completed_cases) || [0]));
-                      case 'weekly':
-                        return Math.max(...(performanceData?.treatmentTimes || []));
-                      case 'monthly':
-                        return Math.max(...(performanceData?.treatmentTimes || []));
-                      case 'yearly':
-                        return Math.max(...(performanceData?.treatmentTimes || []));
-                    }
-                  })()}
-                </div>
-                <div className="text-xs text-gray-500">
-                  {viewType === 'daily' ? 'Peak Cases/Hour' 
-                    : viewType === 'weekly' ? 'Peak Cases/Day' 
-                    : viewType === 'monthly' ? 'Peak Cases/Week'
-                    : 'Peak Cases/Month'}
-                </div>
-              </div>
-
-              {/* Average Cases */}
-              <div className="bg-white rounded-lg p-4 shadow-sm">
-                <div className="text-lg font-semibold text-[#1662cc]">
-                  {(() => {
-                    switch(viewType) {
-                      case 'daily':
-                        const totalCases = dailyData?.hourly_metrics?.reduce((sum, metric) => sum + metric.completed_cases, 0) || 0;
-                        return (totalCases / 24).toFixed(1);
-                      case 'weekly':
-                        const weeklyTotalCases = performanceData?.treatmentTimes?.reduce((sum, time) => sum + time, 0) || 0;
-                        return (weeklyTotalCases / 7).toFixed(1);
-                      case 'monthly':
-                        const monthlyTotalCases = performanceData?.treatmentTimes?.reduce((sum, time) => sum + time, 0) || 0;
-                        return (monthlyTotalCases / 30).toFixed(1);
-                      case 'yearly':
-                        const yearlyTotalCases = performanceData?.treatmentTimes?.reduce((sum, time) => sum + time, 0) || 0;
-                        return (yearlyTotalCases / 365).toFixed(1);
-                    }
-                  })()}
-                </div>
-                <div className="text-xs text-gray-500">
-                  {viewType === 'daily' ? 'Avg Cases/Hour' 
-                    : viewType === 'weekly' ? 'Avg Cases/Day' 
-                    : viewType === 'monthly' ? 'Avg Cases/Week'
-                    : 'Avg Cases/Month'}
-                </div>
-              </div>
-            </div>
-          )}
         </div>
+
+        <div className="mt-6">
+          <div className="h-[300px] md:h-[400px] w-full">
+            <Line data={getChartData()} options={options} />
+          </div>
+        </div>
+
+        {/* Statistics Section */}
+        {((viewType === 'daily' && dailyData) || 
+          (viewType === 'weekly' && performanceData) || 
+          (viewType === 'monthly' && performanceData) ||
+          (viewType === 'yearly' && performanceData)) && (
+          <div className="grid grid-cols-3 gap-4 mt-6">
+            {/* Total Cases */}
+            <div className="bg-white rounded-lg p-4 shadow-sm">
+              <div className="text-lg font-semibold text-[#1662cc]">
+                {(() => {
+                  switch(viewType) {
+                    case 'daily':
+                      return dailyData?.hourly_metrics?.reduce((sum, metric) => sum + metric.completed_cases, 0) || 0;
+                    case 'weekly':
+                      return performanceData?.totalCases || 0;
+                    case 'monthly':
+                      return performanceData?.totalCases || 0;
+                    case 'yearly':
+                      return performanceData?.totalCases || 0;
+                  }
+                })()}
+              </div>
+              <div className="text-xs text-gray-500">Total Cases</div>
+            </div>
+
+            {/* Peak Cases */}
+            <div className="bg-white rounded-lg p-4 shadow-sm">
+              <div className="text-lg font-semibold text-[#1662cc]">
+                {(() => {
+                  switch(viewType) {
+                    case 'daily':
+                      return Math.max(...(dailyData?.hourly_metrics?.map(metric => metric.completed_cases) || [0]));
+                    case 'weekly':
+                      return Math.max(...(performanceData?.treatmentTimes || []));
+                    case 'monthly':
+                      return Math.max(...(performanceData?.treatmentTimes || []));
+                    case 'yearly':
+                      return Math.max(...(performanceData?.treatmentTimes || []));
+                  }
+                })()}
+              </div>
+              <div className="text-xs text-gray-500">
+                {viewType === 'daily' ? 'Peak Cases/Hour' 
+                  : viewType === 'weekly' ? 'Peak Cases/Day' 
+                  : viewType === 'monthly' ? 'Peak Cases/Week'
+                  : 'Peak Cases/Month'}
+              </div>
+            </div>
+
+            {/* Average Cases */}
+            <div className="bg-white rounded-lg p-4 shadow-sm">
+              <div className="text-lg font-semibold text-[#1662cc]">
+                {(() => {
+                  switch(viewType) {
+                    case 'daily':
+                      const totalCases = dailyData?.hourly_metrics?.reduce((sum, metric) => sum + metric.completed_cases, 0) || 0;
+                      return (totalCases / 24).toFixed(1);
+                    case 'weekly':
+                      const weeklyTotalCases = performanceData?.treatmentTimes?.reduce((sum, time) => sum + time, 0) || 0;
+                      return (weeklyTotalCases / 7).toFixed(1);
+                    case 'monthly':
+                      const monthlyTotalCases = performanceData?.treatmentTimes?.reduce((sum, time) => sum + time, 0) || 0;
+                      return (monthlyTotalCases / 30).toFixed(1);
+                    case 'yearly':
+                      const yearlyTotalCases = performanceData?.treatmentTimes?.reduce((sum, time) => sum + time, 0) || 0;
+                      return (yearlyTotalCases / 365).toFixed(1);
+                  }
+                })()}
+              </div>
+              <div className="text-xs text-gray-500">
+                {viewType === 'daily' ? 'Avg Cases/Hour' 
+                  : viewType === 'weekly' ? 'Avg Cases/Day' 
+                  : viewType === 'monthly' ? 'Avg Cases/Week'
+                  : 'Avg Cases/Month'}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Treatment Time Block */}
         <div className="bg-white rounded-[20px] p-6 shadow-sm w-full -mx-6">
