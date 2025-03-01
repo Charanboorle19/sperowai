@@ -16,20 +16,14 @@ const TabletProfile = () => {
   const email = localStorage.getItem('user_email');
   const [requestSent, setRequestSent] = useState(false);
   const [isRequestLoading, setIsRequestLoading] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const handleLogout = async () => {
-    setIsLoading(true);
-    try {
-      console.log("Logging out...");
-      await apiService.logout();
-      console.log("Logout successful.");
-    } catch (error) {
-      console.error("Logout API error:", error);
-    } finally {
-      // Always clear local storage and navigate, even if API call fails
+  const handleLogout = () => {
+    setIsLoggingOut(true);
+    setTimeout(() => {
       localStorage.removeItem('jwt_token');
       navigate('/landpage');
-    }
+    }, 2000);
   };
 
   const handleRequestAccess = async (e) => {
@@ -45,6 +39,21 @@ const TabletProfile = () => {
       setIsRequestLoading(false);
     }
   };
+
+  if (isLoggingOut) {
+    return (
+      <div className="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center">
+        <div className="w-64 h-64">
+          <DotLottieReact
+            src="https://lottie.host/07ae7588-f68b-4d0f-ab7f-bf62071bf857/HN3niWc2Jx.lottie"
+            loop={false}
+            autoplay
+          />
+        </div>
+        <p className="text-xl font-medium text-gray-700 -mt-10">Logging out...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex">
@@ -157,10 +166,8 @@ const TabletProfile = () => {
           {/* Logout Button */}
           <div className="mt-10 flex justify-center">
             <button 
-              onClick={() => {
-                handleLogout();
-              }}
-              className="flex items-center gap-2 px-8 py-4 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors font-medium"
+              onClick={handleLogout}
+              className="flex items-center gap-2 px-8 py-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors font-medium"
             >
               <IoLogOut className="text-xl" />
               <span>Logout</span>

@@ -17,11 +17,11 @@ const ProfilePage = () => {
   const email = localStorage.getItem('user_email');
   const [requestSent, setRequestSent] = useState(false);
   const [isRequestLoading, setIsRequestLoading] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const handleLogout = async () => {
-    setIsLoading(true);
-    try {
-      await apiService.logout();
+  const handleLogout = () => {
+    setIsLoggingOut(true);
+    setTimeout(() => {
       localStorage.removeItem('jwt_token');
       localStorage.removeItem('username');
       localStorage.removeItem('user_email');
@@ -29,9 +29,7 @@ const ProfilePage = () => {
       localStorage.removeItem('medicalRecord');
       dispatch(clearMedicalRecord());
       navigate('/landpage');
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
+    }, 2000);
   };
 
   const handleBack = () => {
@@ -49,16 +47,17 @@ const ProfilePage = () => {
     }
   };
 
-  if (isLoading) {
+  if (isLoggingOut) {
     return (
-      <div className="fixed inset-0 bg-white flex flex-col items-center justify-center z-50">
-        <DotLottieReact
-          src="https://lottie.host/ad9c421b-201a-4d0b-bdcd-d9521635e796/6cDY3LRDr4.lottie"
-          loop
-          autoplay
-          style={{ width: '200px', height: '200px' }}
-        />
-        <p className="mt-4 text-xl text-gray-600 font-medium">Logging out...</p>
+      <div className="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center">
+        <div className="w-64 h-64">
+          <DotLottieReact
+            src="https://lottie.host/07ae7588-f68b-4d0f-ab7f-bf62071bf857/HN3niWc2Jx.lottie"
+            loop={false}
+            autoplay
+          />
+        </div>
+        <p className="text-xl font-medium text-gray-700 -mt-10">Logging out...</p>
       </div>
     );
   }
@@ -174,7 +173,7 @@ const ProfilePage = () => {
         <div className="mt-8">
           <button 
             onClick={handleLogout}
-            className="w-full py-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors font-medium flex items-center justify-center gap-2"
+            className="flex items-center gap-2 px-8 py-3 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors font-medium"
           >
             <IoLogOut className="text-xl" />
             <span>Logout</span>

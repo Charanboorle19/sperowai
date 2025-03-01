@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaSearch, FaTimes, FaArrowRight, FaExternalLinkAlt } from 'react-icons/fa';
 import { useMediaQuery } from 'react-responsive';
 
-const Search = () => {
+const Search = ({ onShowResultChange = () => {} }) => {
   const [inputValue, setInputValue] = useState('');
   const [placeholder, setPlaceholder] = useState('');
   const [showResult, setShowResult] = useState(false);
@@ -10,6 +10,7 @@ const Search = () => {
   const [searchResults, setSearchResults] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const isTabletOrDesktop = useMediaQuery({ minWidth: 768 });
+  const [activeTab, setActiveTab] = useState('ai');
 
   const fullText = "Search medical topics, reports, articles and more";
   const typingSpeed = 100;
@@ -50,6 +51,7 @@ const Search = () => {
     if (inputValue.trim()) {
       setIsLoading(true);
       setShowResult(true);
+      onShowResultChange(true);
       
       try {
         const token = localStorage.getItem('jwt_token');
@@ -68,6 +70,7 @@ const Search = () => {
           if (!recentSearches.includes(inputValue.trim())) {
             setRecentSearches(prev => [inputValue.trim(), ...prev]);
           }
+          window.scrollTo(0, 0);
         } else {
           console.error('Search failed:', data.error);
         }
@@ -83,6 +86,12 @@ const Search = () => {
     if (e.key === 'Enter') {
       handleSearch();
     }
+  };
+
+  const handleClose = () => {
+    setShowResult(false);
+    onShowResultChange(false);
+    setSearchResults(null);
   };
 
   const removeSearch = (searchToRemove) => {
@@ -102,160 +111,235 @@ const Search = () => {
   };
 
   return (
-    <div className="bg-[#d6d9fdb4] rounded-[15px] p-4 md:p-5 mt-4 mb-4">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-8 h-8 md:w-10 md:h-10 bg-purple-100 rounded-full flex items-center justify-center">
-          <FaSearch className="text-purple-500 text-base md:text-lg" />
-        </div>
-        <div>
-          <h2 className="text-base md:text-lg font-semibold text-gray-800">Quick Search</h2>
-          <p className="text-xs md:text-sm text-gray-500">Find what you need</p>
-        </div>
-      </div>
-
-      <div className="relative">
-        <input
-          type="text"
-          value={inputValue}
-          onChange={handleInputChange}
-          onKeyPress={handleKeyPress}
-          placeholder={placeholder}
-          className="w-full h-[40px] md:h-[50px] pl-10 md:pl-12 pr-12 rounded-[20px] md:rounded-[25px] bg-white/80 text-sm md:text-base text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/20 transition-all"
-        />
-        <div className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 text-gray-400">
-          <FaSearch className="text-base md:text-lg" />
-        </div>
-
-        {inputValue && (
-          <button 
-            onClick={handleSearch}
-            className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-purple-100 hover:bg-purple-200 transition-colors"
-          >
-            <FaArrowRight className="text-purple-500 text-sm" />
-          </button>
-        )}
-
-        {!inputValue && !placeholder && (
-          <div className="absolute left-10 md:left-12 top-1/2 -translate-y-1/2">
-            <span className="inline-block w-0.5 h-5 bg-gray-400 animate-blink"></span>
-          </div>
-        )}
-      </div>
-
-      {/* Results Block */}
-      {showResult && (
-        <div className="fixed inset-0 bg-white z-50 overflow-hidden">
-          {/* Header */}
-          <div className="h-16 border-b flex items-center px-6 justify-between bg-white">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                <FaSearch className="text-purple-500 text-base" />
-              </div>
-              <h2 className="text-lg font-semibold text-gray-800">{searchResults?.query || 'Search Results'}</h2>
+    <div className="w-full">
+      <div className="sticky top-0 z-50">
+        <div className="bg-[#d6d9fdb4] rounded-[15px] p-4 md:p-5 mt-4 mb-4">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-8 h-8 md:w-10 md:h-10 bg-purple-100 rounded-full flex items-center justify-center">
+              <FaSearch className="text-purple-500 text-base md:text-lg" />
             </div>
-            <button 
-              onClick={() => {
-                setShowResult(false);
-                setSearchResults(null);
-              }}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-            >
-              <FaTimes className="text-gray-500" />
-            </button>
+            <div>
+              <h2 className="text-base md:text-lg font-semibold text-gray-800">Quick Search</h2>
+              <p className="text-xs md:text-sm text-gray-500">Find what you need</p>
+            </div>
           </div>
 
-          {/* Content */}
-          <div className="h-[calc(100vh-4rem)] flex">
-            {isLoading ? (
-              <div className="flex-1 flex items-center justify-center">
-                <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
-              </div>
-            ) : searchResults ? (
-              <>
-                {/* Left Side - AI Response */}
-                <div className="w-1/2 h-full border-r overflow-y-auto">
-                  <div className="p-6">
-                    <div className="text-sm font-bold text-purple-600 uppercase tracking-wider mb-3">AI Response</div>
-                    <div className="bg-gray-50 rounded-lg p-6 text-gray-700 whitespace-pre-wrap font-medium leading-relaxed">
-                      {searchResults.ai_response.split('\n').map((paragraph, index) => {
-                        // Function to process bold text between stars
-                        const processBoldText = (text) => {
-                          const parts = text.split(/(\*\*.*?\*\*)/g);
-                          return parts.map((part, i) => {
-                            if (part.startsWith('**') && part.endsWith('**')) {
-                              return (
-                                <span key={i} className="font-bold text-gray-900">
-                                  {part}
-                                </span>
-                              );
-                            }
-                            return part;
-                          });
-                        };
+          <div className="relative">
+            <input
+              type="text"
+              value={inputValue}
+              onChange={handleInputChange}
+              onKeyPress={handleKeyPress}
+              placeholder={placeholder}
+              className="w-full h-[40px] md:h-[50px] pl-10 md:pl-12 pr-12 rounded-[20px] md:rounded-[25px] bg-white/80 text-sm md:text-base text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/20 transition-all"
+            />
+            <div className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 text-gray-400">
+              <FaSearch className="text-base md:text-lg" />
+            </div>
 
-                        if (paragraph.match(/^\d+\./)) {
-                          return (
-                            <div key={index} className="mb-3">
-                              {processBoldText(paragraph)}
-                            </div>
-                          );
-                        } else if (paragraph.match(/^\s*\*/)) {
-                          return (
-                            <div key={index} className="ml-4 mb-2">
-                              {processBoldText(paragraph)}
-                            </div>
-                          );
-                        }
-                        return (
-                          <p key={index} className="mb-3">
-                            {processBoldText(paragraph)}
-                          </p>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
+            {inputValue && (
+              <button 
+                onClick={handleSearch}
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-purple-100 hover:bg-purple-200 transition-colors"
+              >
+                <FaArrowRight className="text-purple-500 text-sm" />
+              </button>
+            )}
 
-                {/* Right Side - Search Results */}
-                <div className="w-1/2 h-full overflow-y-auto">
-                  <div className="p-6">
-                    <div className="text-sm font-bold text-purple-600 uppercase tracking-wider mb-3">Web Results</div>
-                    <div className="space-y-4">
-                      {searchResults.search_results.map((result, index) => (
-                        <div key={index} className="group">
-                          <a 
-                            href={result.link} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="block p-4 rounded-lg hover:bg-purple-50/50 transition-colors border border-transparent hover:border-purple-100"
-                          >
-                            <div className="flex items-start justify-between">
-                              <h4 className="text-blue-600 font-semibold text-base group-hover:underline line-clamp-1">
-                                {result.title}
-                              </h4>
-                              <FaExternalLinkAlt className="text-gray-400 text-xs flex-shrink-0 mt-1 ml-2 group-hover:text-blue-500" />
-                            </div>
-                            <p className="text-sm text-gray-600 mt-1 line-clamp-2 leading-relaxed">
-                              {result.snippet}
-                            </p>
-                            <div className="text-xs text-gray-400 mt-2 font-medium">
-                              {result.link}
-                            </div>
-                          </a>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </>
-            ) : (
-              <div className="flex-1 flex items-center justify-center text-gray-500">
-                No results to display
+            {!inputValue && !placeholder && (
+              <div className="absolute left-10 md:left-12 top-1/2 -translate-y-1/2">
+                <span className="inline-block w-0.5 h-5 bg-gray-400 animate-blink"></span>
               </div>
             )}
           </div>
+
+          {showResult && (
+            <div className="fixed inset-0 bg-white z-50 overflow-hidden">
+              {/* Mobile Header - Show only on mobile */}
+              <div className="md:hidden">
+                <div className="h-16 border-b flex items-center px-4 sticky top-0 bg-white">
+                  <button
+                    onClick={handleClose}
+                    className="p-2 hover:bg-gray-100 rounded-full"
+                  >
+                    <FaTimes className="text-gray-500" />
+                  </button>
+                  <div className="flex-1 flex justify-center gap-2">
+                    <button
+                      onClick={() => setActiveTab('ai')}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors
+                        ${activeTab === 'ai' 
+                          ? 'bg-blue-100 text-blue-600' 
+                          : 'text-gray-600'}`}
+                    >
+                      AI Response
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('web')}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors
+                        ${activeTab === 'web' 
+                          ? 'bg-blue-100 text-blue-600' 
+                          : 'text-gray-600'}`}
+                    >
+                      Web Results
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Desktop Header - Show only on desktop */}
+              <div className="hidden md:flex h-16 border-b items-center px-6 justify-between bg-white">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                    <FaSearch className="text-purple-500 text-base" />
+                  </div>
+                  <h2 className="text-lg font-semibold text-gray-800">{searchResults?.query || 'Search Results'}</h2>
+                </div>
+                <button 
+                  onClick={handleClose}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  <FaTimes className="text-gray-500" />
+                </button>
+              </div>
+
+              {/* Mobile Content */}
+              <div className="md:hidden h-[calc(100vh-4rem)] overflow-y-auto">
+                {isLoading ? (
+                  <div className="flex items-center justify-center h-full">
+                    <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                  </div>
+                ) : searchResults ? (
+                  <div className="p-4">
+                    {activeTab === 'ai' ? (
+                      <div className="bg-gray-50 rounded-xl p-4">
+                        <div className="prose max-w-none text-gray-700 whitespace-pre-wrap">
+                          {searchResults.ai_response.split('\n').map((paragraph, index) => (
+                            <p key={index} className="mb-3">
+                              {paragraph}
+                            </p>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {searchResults.search_results?.map((result, index) => (
+                          <a
+                            key={index}
+                            href={result.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block bg-white rounded-xl p-4 shadow-sm"
+                          >
+                            <h3 className="text-blue-600 font-medium mb-1">{result.title}</h3>
+                            <p className="text-sm text-gray-600">{result.snippet}</p>
+                            <span className="text-xs text-gray-400 mt-2 block">{result.link}</span>
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center h-full text-gray-500">
+                    No results to display
+                  </div>
+                )}
+              </div>
+
+              {/* Desktop Content - Keep existing layout */}
+              <div className="hidden md:flex h-[calc(100vh-4rem)]">
+                {isLoading ? (
+                  <div className="flex-1 flex items-center justify-center">
+                    <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                ) : searchResults ? (
+                  <>
+                    {/* Left Side - AI Response */}
+                    <div className="w-1/2 h-full border-r overflow-y-auto">
+                      <div className="p-6">
+                        <div className="text-sm font-bold text-purple-600 uppercase tracking-wider mb-3">AI Response</div>
+                        <div className="bg-gray-50 rounded-lg p-6 text-gray-700 whitespace-pre-wrap font-medium leading-relaxed">
+                          {searchResults.ai_response.split('\n').map((paragraph, index) => {
+                            // Function to process bold text between stars
+                            const processBoldText = (text) => {
+                              const parts = text.split(/(\*\*.*?\*\*)/g);
+                              return parts.map((part, i) => {
+                                if (part.startsWith('**') && part.endsWith('**')) {
+                                  return (
+                                    <span key={i} className="font-bold text-gray-900">
+                                      {part}
+                                    </span>
+                                  );
+                                }
+                                return part;
+                              });
+                            };
+
+                            if (paragraph.match(/^\d+\./)) {
+                              return (
+                                <div key={index} className="mb-3">
+                                  {processBoldText(paragraph)}
+                                </div>
+                              );
+                            } else if (paragraph.match(/^\s*\*/)) {
+                              return (
+                                <div key={index} className="ml-4 mb-2">
+                                  {processBoldText(paragraph)}
+                                </div>
+                              );
+                            }
+                            return (
+                              <p key={index} className="mb-3">
+                                {processBoldText(paragraph)}
+                              </p>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Right Side - Search Results */}
+                    <div className="w-1/2 h-full overflow-y-auto">
+                      <div className="p-6">
+                        <div className="text-sm font-bold text-purple-600 uppercase tracking-wider mb-3">Web Results</div>
+                        <div className="space-y-4">
+                          {searchResults.search_results.map((result, index) => (
+                            <div key={index} className="group">
+                              <a 
+                                href={result.link} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="block p-4 rounded-lg hover:bg-purple-50/50 transition-colors border border-transparent hover:border-purple-100"
+                              >
+                                <div className="flex items-start justify-between">
+                                  <h4 className="text-blue-600 font-semibold text-base group-hover:underline line-clamp-1">
+                                    {result.title}
+                                  </h4>
+                                  <FaExternalLinkAlt className="text-gray-400 text-xs flex-shrink-0 mt-1 ml-2 group-hover:text-blue-500" />
+                                </div>
+                                <p className="text-sm text-gray-600 mt-1 line-clamp-2 leading-relaxed">
+                                  {result.snippet}
+                                </p>
+                                <div className="text-xs text-gray-400 mt-2 font-medium">
+                                  {result.link}
+                                </div>
+                              </a>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex-1 flex items-center justify-center text-gray-500">
+                    No results to display
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };

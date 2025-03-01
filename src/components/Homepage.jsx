@@ -15,6 +15,7 @@ const HomePage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const consultation_id = useSelector(state => state.medicalRecord.consultation_id);
+  const [showResult, setShowResult] = useState(false);
 
   // Handle auto-close of consultation (same as tablet version)
   useEffect(() => {
@@ -56,14 +57,15 @@ const HomePage = () => {
       <MobileHeader />
       <div className="max-w-[750px] mx-auto px-4">
         <div className="mb-4">
-          <Search />
+          <Search onShowResultChange={(value) => setShowResult(value)} />
         </div>
         
         <Performance />
       </div>
 
       <div 
-        className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50"
+        className={`fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 md:block
+          ${showResult ? 'hidden' : ''}`}
         style={{ position: 'fixed', bottom: '24px' }}
       >
         <AiButton onClick={handleAIButtonClick} />

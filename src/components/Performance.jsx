@@ -260,18 +260,18 @@ const Performance = () => {
   };
 
   return (
-    <div className="bg-[#F8FAFC] p-6">
-      <div className="flex flex-col gap-6">
+    <div className="w-full min-w-[360px] max-w-[750px] mx-auto px-4 sm:px-6">
+      <div className="w-full flex flex-col gap-4">
         {/* Efficiency Metrics */}
-        <div className="bg-white max-lg:p-3 p-6 rounded-2xl shadow-lg">
-          <div className="flex flex-wrap items-center gap-4 mb-6">
+        <div className="bg-white rounded-[20px] p-6 shadow-sm w-full -mx-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
             {/* Time Range Options */}
-            <div className="flex bg-gray-100 p-1 rounded-lg">
+            <div className="flex bg-gray-100 p-1.5 rounded-lg w-full overflow-x-auto hide-scrollbar">
               {['daily', 'weekly', 'monthly', 'yearly'].map((type) => (
                 <button
                   key={type}
                   onClick={() => setViewType(type)}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                  className={`flex-1 min-w-[70px] px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 whitespace-nowrap ${
                     viewType === type
                       ? 'bg-white text-blue-600 shadow-sm'
                       : 'text-gray-600 hover:text-gray-800'
@@ -283,12 +283,12 @@ const Performance = () => {
             </div>
 
             {/* Date Picker */}
-            <div className="relative">
+            <div className="relative w-full">
               <DatePicker
                 selected={selectedDate}
                 onChange={date => setSelectedDate(date)}
                 {...getDatePickerConfig()}
-                className="bg-white border border-gray-200 text-gray-700 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                className="w-full bg-white border border-gray-200 text-gray-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                 calendarClassName="shadow-lg rounded-lg border-0"
                 showPopperArrow={false}
                 maxDate={new Date()}
@@ -417,7 +417,7 @@ const Performance = () => {
         </div>
 
         {/* Treatment Time Block */}
-        <div className="bg-white max-lg:p-3 p-6 rounded-2xl shadow-lg">
+        <div className="bg-white rounded-[20px] p-6 shadow-sm w-full -mx-6">
           <div className="flex flex-col">
             <div className="flex items-center justify-between mb-4">
               <span className="text-lg font-semibold text-gray-800">

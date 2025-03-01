@@ -16,7 +16,8 @@ import {
 import { useMetrics } from '../hooks/useMetrics';
 import { apiService } from '../services/api/apiService';
 import format from 'date-fns/format';
-import { getWeek, getYear, getMonth } from 'date-fns';
+import { getWeek, getYear, getMonth, startOfWeek, endOfWeek } from 'date-fns';
+import { ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon, CalendarIcon } from '@heroicons/react/solid';
 
 ChartJS.register(
   CategoryScale,
@@ -227,36 +228,73 @@ const TabletPerformance = () => {
     }
   };
 
-  // Update DatePicker configuration based on viewType
+  // Function to handle date changes and sync all view types
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+    // Additional logic for syncing will be handled by getDatePickerConfig
+  };
+
   const getDatePickerConfig = () => {
     switch (viewType) {
       case 'daily':
         return {
           showMonthYearPicker: false,
           showYearPicker: false,
-          dateFormat: "MMMM d, yyyy"
+          dateFormat: "MMMM d, yyyy",
+          maxDate: new Date()
         };
       case 'weekly':
         return {
-          showWeekNumbers: false,
+          showWeekNumbers: true,
           dateFormat: "'Week' w, MMM yyyy",
+          maxDate: new Date(),
+          minDate: new Date(2020, 0, 1), // Adjust as needed
           showMonthYearPicker: false,
-          formatWeek: (date) => {
-            const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-            const weekNumber = Math.ceil((date.getDate() + firstDayOfMonth.getDay()) / 7);
-            return `Week ${weekNumber}`;
-          }
+          calendarStartDay: 1, // Monday
+          formatWeekNumber: (date) => getWeek(date),
+          onSelect: (date) => {
+            // Ensure we select the start of the week
+            setSelectedDate(startOfWeek(date, { weekStartsOn: 1 }));
+          },
+          renderCustomHeader: ({
+            date,
+            decreaseMonth,
+            increaseMonth,
+            prevMonthButtonDisabled,
+            nextMonthButtonDisabled
+          }) => (
+            <div className="flex justify-between items-center px-2 py-2">
+              <button
+                onClick={decreaseMonth}
+                disabled={prevMonthButtonDisabled}
+                className="p-1 hover:bg-gray-100 rounded-full disabled:opacity-50"
+              >
+                <ChevronLeftIcon className="w-5 h-5" />
+              </button>
+              <span className="text-lg font-semibold">
+                {format(date, 'MMMM yyyy')}
+              </span>
+              <button
+                onClick={increaseMonth}
+                disabled={nextMonthButtonDisabled}
+                className="p-1 hover:bg-gray-100 rounded-full disabled:opacity-50"
+              >
+                <ChevronRightIcon className="w-5 h-5" />
+              </button>
+            </div>
+          )
         };
       case 'monthly':
         return {
           showMonthYearPicker: true,
-          showYearPicker: false,
-          dateFormat: "MMMM yyyy"
+          dateFormat: "MMMM yyyy",
+          maxDate: new Date()
         };
       case 'yearly':
         return {
           showYearPicker: true,
-          dateFormat: "yyyy"
+          dateFormat: "yyyy",
+          maxDate: new Date()
         };
       default:
         return {};
@@ -329,28 +367,25 @@ const TabletPerformance = () => {
             <div className="relative">
               <DatePicker
                 selected={selectedDate}
-                onChange={date => setSelectedDate(date)}
+                onChange={handleDateChange}
                 {...getDatePickerConfig()}
-                className="bg-white border border-gray-200 text-gray-700 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                calendarClassName="shadow-lg rounded-lg border-0"
+                className="w-full bg-white border border-gray-200 text-gray-700 rounded-lg px-4 py-2.5 text-sm 
+                  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                calendarClassName="shadow-xl rounded-lg border-0 bg-white"
                 showPopperArrow={false}
-                maxDate={new Date()}
+                popperClassName="react-datepicker-popper"
                 customInput={
-                  <button className="flex items-center gap-2 bg-white border border-gray-200 text-gray-700 rounded-lg px-4 py-2 text-sm hover:border-gray-300 transition-all duration-200">
-                    <span>
+                  <button className="flex items-center justify-between w-full bg-white border border-gray-200 
+                    text-gray-700 rounded-lg px-4 py-2.5 text-sm hover:border-gray-300 transition-all duration-200">
+                    <span className="flex items-center gap-2">
+                      <CalendarIcon className="w-5 h-5 text-gray-500" />
                       {viewType === 'weekly' ? (
-                        (() => {
-                          const firstDayOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
-                          const weekNumber = Math.ceil((selectedDate.getDate() + firstDayOfMonth.getDay()) / 7);
-                          return `Week ${weekNumber}, ${format(selectedDate, 'MMM yyyy')}`;
-                        })()
+                        `Week ${getWeek(selectedDate)}, ${format(selectedDate, 'MMM yyyy')}`
                       ) : (
                         format(selectedDate, getDatePickerConfig().dateFormat)
                       )}
                     </span>
-                    <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
+                    <ChevronDownIcon className="w-5 h-5 text-gray-500" />
                   </button>
                 }
               />
