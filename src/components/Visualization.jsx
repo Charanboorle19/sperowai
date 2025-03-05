@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Line, Bar, Pie, Scatter } from 'react-chartjs-2';
 import { useSelector } from 'react-redux';
-import { ChevronLeft, ChevronRight } from 'react-feather';
-import { store } from '../store';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -39,35 +37,10 @@ const chartComponentMap = {
 };
 
 const Visualization = ({ isCollapsed, CardHeader }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const visualizations = useSelector((state) => {
-    
-    return state.medicalRecord.visualizations || [];
-  });
-
-  // Debug logs
-  useEffect(() => {
-    
-  }, [visualizations, currentIndex]);
-
-  // Reset currentIndex when visualizations change
-  useEffect(() => {
-    if (currentIndex >= visualizations.length) {
-      setCurrentIndex(0);
-    }
-  }, [visualizations, currentIndex]);
-
-  const handlePrevious = () => {
-    setCurrentIndex((prev) => (prev > 0 ? prev - 1 : prev));
-  };
-
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev < visualizations.length - 1 ? prev + 1 : prev));
-  };
+  const visualizations = useSelector((state) => state.medicalRecord.visualizations || []);
 
   const formatChartData = (visualization) => {
     if (!visualization) return null;
-    
 
     const { data, type, title } = visualization;
     const { x_axis, y_axis } = data;
@@ -173,60 +146,36 @@ const Visualization = ({ isCollapsed, CardHeader }) => {
     };
   };
 
-  const currentVisualization = visualizations.length > 0 ? visualizations[currentIndex] : null;
-  
-  
-  const chartConfig = currentVisualization ? formatChartData(currentVisualization) : null;
-  
-
   return (
     <div className="bg-white rounded-xl shadow-sm">
       <CardHeader 
-        title="Visualization"
+        title="Visualizations"
         section="visualization"
       />
       
       {!isCollapsed && (
         <div className="p-4">
           <div className="bg-gray-50 rounded-xl p-4">
-            {visualizations.length > 0 && currentVisualization ? (
-              <div className="relative">
-                <div className="aspect-square w-full bg-white rounded-lg shadow-sm p-4">
-                  {chartConfig && (
-                    <>
+            {visualizations.length > 0 ? (
+              <div className="space-y-6">
+                {visualizations.map((visualization, index) => {
+                  const chartConfig = formatChartData(visualization);
+                  return (
+                    <div key={index} className="bg-white rounded-lg shadow-sm p-4">
                       <div style={{ height: '400px', position: 'relative' }}>
-                        {React.createElement(chartComponentMap[chartConfig.type] || Line, {
+                        {chartConfig && React.createElement(chartComponentMap[chartConfig.type] || Line, {
                           data: chartConfig.data,
                           options: chartConfig.options
                         })}
                       </div>
-                      {currentVisualization.clinical_significance && (
+                      {visualization.clinical_significance && (
                         <div className="mt-4 text-sm text-gray-600">
-                          <strong>Clinical Significance:</strong> {currentVisualization.clinical_significance}
+                          <strong>Clinical Significance:</strong> {visualization.clinical_significance}
                         </div>
                       )}
-                    </>
-                  )}
-                </div>
-                
-                {visualizations.length > 1 && (
-                  <div className="absolute top-1/2 -translate-y-1/2 w-full flex justify-between px-2">
-                    <button
-                      onClick={handlePrevious}
-                      disabled={currentIndex === 0}
-                      className="p-2 rounded-full bg-white shadow-md disabled:opacity-50"
-                    >
-                      <ChevronLeft size={20} />
-                    </button>
-                    <button
-                      onClick={handleNext}
-                      disabled={currentIndex === visualizations.length - 1}
-                      className="p-2 rounded-full bg-white shadow-md disabled:opacity-50"
-                    >
-                      <ChevronRight size={20} />
-                    </button>
-                  </div>
-                )}
+                    </div>
+                  );
+                })}
               </div>
             ) : (
               <div className="text-center">
