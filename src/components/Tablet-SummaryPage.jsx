@@ -11,11 +11,13 @@ import { IoClose } from 'react-icons/io5';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import html2pdf from 'html2pdf.js';
 import { FaDownload } from 'react-icons/fa';
+import Feedback from './Feedback';
 
 const TabletSummaryPage = ({ patientId = 1 }) => {
   const [scheduledData, setScheduledData] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showCloseDialog, setShowCloseDialog] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
   const [isChatActive, setIsChatActive] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -377,19 +379,49 @@ const TabletSummaryPage = ({ patientId = 1 }) => {
               </p>
             </div>
 
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowCloseDialog(false)}
-                className="flex-1 px-4 py-2 border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                Cancel
-              </button>
+            <div className="flex flex-col gap-3">
               <button
                 onClick={handleConfirmCloseConsultation}
-                className="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                className="w-full px-4 py-2 bg-[#3973EB] text-white rounded-xl font-medium hover:bg-[#2960d8] transition-colors"
               >
                 Close Consultation
               </button>
+              
+              {/* Feedback Button with Animation */}
+              <button
+                onClick={() => setShowFeedback(true)}
+                className="w-full px-4 py-2 bg-white text-[#3973EB] border-2 border-[#3973EB] rounded-xl font-medium 
+                         hover:bg-blue-50 transition-colors relative animate-pulse hover:animate-none"
+              >
+                Share Your Feedback
+              </button>
+
+              <button
+                onClick={() => setShowCloseDialog(false)}
+                className="w-full px-4 py-2 border border-gray-200 text-gray-600 rounded-xl hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Feedback Modal */}
+      {showFeedback && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-[60]">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white px-6 py-4 border-b flex justify-between items-center">
+              <h2 className="text-xl font-semibold text-gray-900">Feedback</h2>
+              <button 
+                onClick={() => setShowFeedback(false)}
+                className="text-gray-400 hover:text-gray-500 transition-colors"
+              >
+                <IoClose size={24} />
+              </button>
+            </div>
+            <div className="p-6">
+              <Feedback onClose={() => setShowFeedback(false)} />
             </div>
           </div>
         </div>

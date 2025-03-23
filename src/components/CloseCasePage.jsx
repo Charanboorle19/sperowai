@@ -3,6 +3,10 @@ import { IoArrowBack } from 'react-icons/io5';
 import animation1 from '../assets/animation1.gif';
 
 const CloseCasePage = ({ onNavigate }) => {
+  const openFeedback = () => {
+    window.open('/feedback', '_blank');
+  };
+
   return (
     <div className="min-h-screen bg-[#F8FAFC] ">
       <div className="max-w-[440px] mx-auto">
@@ -48,9 +52,17 @@ const CloseCasePage = ({ onNavigate }) => {
           {/* Back to Dashboard Button */}
           <button
             onClick={() => onNavigate('dashboard')}
-            className="w-full max-w-sm bg-[#3973EB] text-white py-3 rounded-xl font-semibold hover:bg-[#2960d8] transition-colors"
+            className="w-full max-w-sm bg-[#3973EB] text-white py-3 rounded-xl font-semibold hover:bg-[#2960d8] transition-colors mb-4"
           >
             Back to Dashboard
+          </button>
+
+          {/* Feedback Button with Animation */}
+          <button
+            onClick={openFeedback}
+            className="w-full max-w-sm bg-white text-[#3973EB] border-2 border-[#3973EB] py-3 rounded-xl font-semibold hover:bg-blue-50 transition-colors relative animate-pulse hover:animate-none"
+          >
+            Share Your Feedback
           </button>
         </div>
       </div>
@@ -58,4 +70,4 @@ const CloseCasePage = ({ onNavigate }) => {
   );
 };
 
-export default CloseCasePage; 
+export default CloseCasePage;

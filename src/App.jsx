@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './components/loginpage';
+import Feedback from './components/Feedback';
 
 // Test Components
 const HomePage = () => (
@@ -29,8 +30,9 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public route */}
+        {/* Public routes */}
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/feedback" element={<Feedback />} />
 
         {/* Protected routes */}
         <Route
@@ -58,7 +60,7 @@ const App = () => {
           }
         />
 
-        {/* Catch all route */}
+        {/* Redirect any unknown routes to home */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

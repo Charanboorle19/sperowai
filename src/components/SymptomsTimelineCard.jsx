@@ -1,6 +1,8 @@
 import React from 'react';
 
 const SymptomsTimelineCard = ({ data, isCollapsed, CardHeader }) => {
+  if (!data || !Array.isArray(data)) return null;
+
   return (
     <div className="mb-6">
       <CardHeader title="Symptoms Timeline" section="symptoms" />
@@ -21,7 +23,7 @@ const SymptomsTimelineCard = ({ data, isCollapsed, CardHeader }) => {
                     <p>Severity: {entry.severity}</p>
                     <p>Duration: {entry.duration}</p>
                     <p>Progression: {entry.progression}</p>
-                    {entry.triggers[0] !== "Not Available" && (
+                    {entry.triggers && Array.isArray(entry.triggers) && entry.triggers.length > 0 && entry.triggers[0] !== "Not Available" && (
                       <p>Triggers: {entry.triggers.join(", ")}</p>
                     )}
                   </div>
