@@ -52,7 +52,7 @@ const AIpage = () => {
         throw new Error('No authentication token found');
       }
 
-      const response = await fetch('https://sperowai.onrender.com/api/process-medical-record', {
+      const response = await fetch('https://sperowai-gfdm.onrender.com/api/process-medical-record', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`

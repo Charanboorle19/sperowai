@@ -55,7 +55,7 @@ const Search = ({ onShowResultChange = () => {} }) => {
       
       try {
         const token = localStorage.getItem('jwt_token');
-        const response = await fetch('https://sperowai.onrender.com/gemini/search', {
+        const response = await fetch('https://sperowai-gfdm.onrender.com/gemini/search', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

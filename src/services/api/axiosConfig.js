@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create axios instance with base URL
 const api = axios.create({
-    baseURL: 'https://sperowai.onrender.com',
+    baseURL: 'https://sperowai-gfdm.onrender.com',
     timeout: 15000,
     withCredentials: false,  // Using token-based auth
     headers: {

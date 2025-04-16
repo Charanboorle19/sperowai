@@ -45,7 +45,7 @@ const TabletPerformance = () => {
     const fetchMetrics = async () => {
       try {
         const token = localStorage.getItem('jwt_token');
-        const response = await fetch('https://sperowai.onrender.com/api/metrics', {
+        const response = await fetch('https://sperowai-gfdm.onrender.com/api/metrics', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
